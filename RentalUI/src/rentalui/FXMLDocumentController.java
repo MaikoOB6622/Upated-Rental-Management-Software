@@ -96,7 +96,7 @@ public class FXMLDocumentController implements Initializable {
         Name.getText();
     }
     @FXML
-    private void createTable(){
+    private void createTable(String HouseNumber, String Amount, String PayerName, String Month){
         String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
         String sql = "CREATE TABLE IF NOT EXISTS JatomApts (\n"
                 +"HouseNumber text PRIMARY KEY, \n"
@@ -104,26 +104,31 @@ public class FXMLDocumentController implements Initializable {
                 +"PayerName text NOT NULL, \n"
                 +"Month text NOT NULL\n"
                 +");";
-        try (Connection conn = DriverManager.getConnection(url);
-                Statement stmt = conn.createStatement()){
+        
+        try {
+            Connection conn = DriverManager.getConnection(url);
+            Statement stmt = conn.createStatement();
             stmt.execute(sql);
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    }        
-    private void insert(String HouseNumber, String Amount, String PayerName, String Month){
-        String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+    
         String sql1 = "INSERT INTO JatomApts(HouseNumber, Amount, PayerName, Month) VALUES(?,?,?,?)";
-        try (Connection conn = DriverManager.getConnection(url);
-                PreparedStatement pstmt = conn.prepareStatement(sql1)){
+        try 
+             {
+            Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(sql1);
             pstmt.setString(1, HouseNumber);
             pstmt.setString(2, Amount);
             pstmt.setString(3, PayerName);
             pstmt.setString(4, Month);
             pstmt.executeUpdate();
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        
     }
     @FXML
     private Button createTable;
@@ -132,7 +137,7 @@ public class FXMLDocumentController implements Initializable {
     private Button Submit;
     @FXML
     private void TableInsertButton(){
-        this.insert((String)HouseNumberBox.getSelectionModel().getSelectedItem(), Amount.getText(), Name.getText(), (String)MonthBox.getSelectionModel().getSelectedItem());
+        this.createTable((String)HouseNumberBox.getSelectionModel().getSelectedItem(), Amount.getText(), Name.getText(), (String)MonthBox.getSelectionModel().getSelectedItem());
     }
         
     @Override
