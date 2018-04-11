@@ -14,13 +14,10 @@ import java.sql.Statement;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -28,7 +25,9 @@ import javafx.scene.layout.AnchorPane;
 
 
 /**
- *
+ *This is a simple rental schedule recording program that gets input 
+ *from the user and saves the data to sqlite database.
+ * 
  * @author Mike
  */
 public class FXMLDocumentController implements Initializable {
@@ -138,6 +137,10 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void TableInsertButton(){
         this.createTable((String)HouseNumberBox.getSelectionModel().getSelectedItem(), Amount.getText(), Name.getText(), (String)MonthBox.getSelectionModel().getSelectedItem());
+        HouseNumberBox.setValue(null);
+        Amount.setText("");
+        Name.setText("");
+        MonthBox.setValue(null);
     }
         
     @Override
