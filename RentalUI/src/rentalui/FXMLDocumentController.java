@@ -15,13 +15,21 @@ import java.sql.Statement;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -50,14 +58,12 @@ public class FXMLDocumentController implements Initializable {
     private AnchorPane h_MonthlyExpenditure;
     
     
-    
     @FXML
     private void handleButtonAction(MouseEvent event) {
         if (event.getTarget() == b_House) {
             h_HouseDetails.setVisible(true);
             h_PaymentDetails.setVisible(false);
             h_MonthlyExpenditure.setVisible(false);
-            
         } else 
         if (event.getTarget() == b_Payment){
             h_PaymentDetails.setVisible(true);
@@ -84,7 +90,6 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void initializeHNoBox(){
         HouseNumberBox.setItems(HouseNumber);
-        HouseNumberBox.setEditable(true);
     }
     
     @FXML
@@ -92,50 +97,43 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void initializeMonthBox(){
         MonthBox.setItems(MonthPaid);
-        MonthBox.setEditable(true);
     }
+    
+    @FXML
+    private ComboBox MonthBox1;
+    
+    @FXML
+    private ComboBox MonthBox2;
     
     @FXML
     private TextField Amount;
-    @FXML
-    private void getAmount(){
-        Amount.getText();
-    }
     
     @FXML
     private TextField Name;
-    @FXML
-    private void getName(){
-        Name.getText();
-    }
     
     @FXML
     private TextField TName;
-    @FXML
-    private void getTName(){
-        TName.getText();
-    }
     
     @FXML
     private TextField Repairs;
-    @FXML
-    private void getRepairs(){
-        Repairs.getText();
-    }
     
     @FXML
     private TextField repairCost;
-    @FXML
-    private void getrepairCost(){
-        repairCost.getText();
-    }
     
     @FXML
     private TextField miscellaneous;
+   
     @FXML
-    private void getmiscellaneous(){
-        miscellaneous.getText();
-    }
+    private TextField WaterBill;
+    
+    @FXML
+    private TextField ElectricityBill;
+    
+    @FXML
+    private TextField Expenditure;
+    
+    @FXML
+    private TextField ReasonForExpense;
     
     @FXML
     private void createTable(String HouseNumber, String Amount, String PayerName, String Month){
@@ -149,8 +147,8 @@ public class FXMLDocumentController implements Initializable {
         
         try {
             Connection conn = DriverManager.getConnection(url);
-            Statement stmt = conn.createStatement();
-            stmt.execute(sql);
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.executeUpdate();
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -182,8 +180,8 @@ public class FXMLDocumentController implements Initializable {
                 +");";
         try {
             Connection conn = DriverManager.getConnection(url);
-            Statement stmt = conn.createStatement();
-            stmt.execute(sql2);
+            PreparedStatement stmt = conn.prepareStatement(sql2);
+            stmt.executeUpdate();
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -203,6 +201,89 @@ public class FXMLDocumentController implements Initializable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+    
+    
+    private void createTable3(String Month, String WaterBill, String ElectricityBill){
+        String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+        String sql4 = "CREATE TABLE IF NOT EXISTS RecurrentVariableMonthlyExpenditure(\n"
+                +"Month text, \n"
+                +"WaterBill text, \n"
+                +"ElectricityBill text \n"
+                +");";
+        try {
+            Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(sql4);
+            pstmt.executeUpdate();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        String sql5 = "INSERT INTO RecurrentVariableMonthlyExpenditure (Month, WaterBill, ElectricityBill) VALUES(?,?,?)";
+        try {
+            Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(sql5);
+            pstmt.setString(1, Month);
+            pstmt.setString(2, WaterBill);
+            pstmt.setString(3, ElectricityBill);
+            pstmt.executeUpdate();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+    }
+    
+    @FXML
+    private void createTable4(String Month, String Expenditure, String ReasonForExpense){
+        String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+        String sql6 = "CREATE TABLE IF NOT EXISTS OtherMonthlyExpenditures (\n"
+                +"Month text, \n"
+                +"Expenditure text, \n"
+                +"ReasonForExpense text \n"
+                +");";
+        try {
+            Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(sql6);
+            pstmt.executeUpdate();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        String sql7 = "INSERT INTO OtherMonthlyExpenditures (Month, Expenditure, ReasonForExpense) VALUES(?,?,?)";
+        try {
+            Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(sql7);
+            pstmt.setString(1, Month);
+            pstmt.setString(2, Expenditure);
+            pstmt.setString(3, ReasonForExpense);
+            pstmt.executeUpdate();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    @FXML
+    private Button submit2;
+    @FXML
+    private void TableInsertButton4(){
+        this.createTable4((String)MonthBox2.getSelectionModel().getSelectedItem(), Expenditure.getText(), ReasonForExpense.getText());
+        MonthBox2.setValue(null);
+        Expenditure.setText("");
+        ReasonForExpense.setText("");
+    }
+    
+    @FXML
+    private Button submit1;
+    @FXML
+    private void TableInsertButton3(){
+        this.createTable3((String)MonthBox1.getSelectionModel().getSelectedItem(), WaterBill.getText(), ElectricityBill.getText());
+        MonthBox1.setValue(null);
+        WaterBill.setText("");
+        ElectricityBill.setText("");
     }
     
     @FXML
@@ -252,6 +333,51 @@ public class FXMLDocumentController implements Initializable {
     }
     
     @FXML
+    private void initiaiizeMonthBox1(){
+        MonthBox1.setItems(MonthPaid);
+        try {
+            String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+            String query = "select * from RecurrentVariableMonthlyExpenditure where Month = ?";
+            Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, (String)MonthBox1.getSelectionModel().getSelectedItem());
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {                
+                WaterBill.setText(rs.getString("WaterBill"));
+                ElectricityBill.setText(rs.getString("ElectricityBill"));
+            }
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+   
+    @FXML
+    private void initializeMonthBox2(){
+        MonthBox2.setItems(MonthPaid);
+        try {
+            String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+            String query = "select * from OtherMonthlyExpenditures where Month = ?";
+            Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, (String)MonthBox2.getSelectionModel().getSelectedItem());
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {                
+                Expenditure.setText(rs.getString("Expenditure"));
+                ReasonForExpense.setText(rs.getString("ReasonForExpense"));
+            }
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+     
+    
+    
+    @FXML
     private Button b_AddRepairs;
     
     @FXML
@@ -259,6 +385,18 @@ public class FXMLDocumentController implements Initializable {
     
     @FXML
     private Button b_AddMiscellaneous;
+    
+    @FXML
+    private Button b_updateWater;
+    
+    @FXML
+    private Button b_updateElectricity;
+    
+    @FXML
+    private Button b_Expenditure;
+    
+    @FXML
+    private Button b_ReasonForExpense;
     
     @FXML
     private void handleRepairButton(){
@@ -316,20 +454,137 @@ public class FXMLDocumentController implements Initializable {
                     PreparedStatement pstmt = conn.prepareStatement(update);
                     pstmt.setString(1, miscellaneous.getText());
                     pstmt.setString(2,(String)SelectHouseBox.getSelectionModel().getSelectedItem() );
+                    int executeUpdate = pstmt.executeUpdate();
                     HouseNumberBox.setValue(null);
                     miscellaneous.setText("");
-                    int executeUpdate = pstmt.executeUpdate();
-                    conn.setAutoCommit(true);
                     if (executeUpdate > 0){
                         System.out.println("Updated");
                     }else
                         System.out.println("Not updated");
-                    conn.close();
+                   conn.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
     }
     
+    @FXML
+    private void updateWater(){
+        String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+        String update = "update RecurrentVariableMonthlyExpenditure set WaterBill = ? where Month = ?";
+        try {
+            Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(update);
+            pstmt.setString(1, WaterBill.getText());
+            pstmt.setString(2, (String)MonthBox1.getSelectionModel().getSelectedItem());
+            int executeUpdate = pstmt.executeUpdate();
+            if (executeUpdate > 0){
+                System.out.println("Updated");
+            }else
+                System.out.println("Not Updated");
+            WaterBill.setText("");
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    @FXML
+    private void updateElectricity(){
+        String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+        String update = "update RecurrentVariableMonthlyExpenditure set ElectricityBill = ? where Month = ?";
+        try {
+            Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(update);
+            pstmt.setString(1, ElectricityBill.getText());
+            pstmt.setString(2, (String)MonthBox1.getSelectionModel().getSelectedItem());
+            pstmt.executeUpdate();
+            ElectricityBill.setText("");
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    @FXML
+    private void updateExpenditure(){
+        String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+        String update = "update OtherMonthlyExpenditures set Expenditure = ? where Month = ?";
+        try {
+            Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(update);
+            pstmt.setString(1, Expenditure.getText());
+            pstmt.setString(2, (String)MonthBox2.getSelectionModel().getSelectedItem());
+            pstmt.executeUpdate();
+            Expenditure.setText("");
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    @FXML
+    private void updateReasonForExpense(){
+        String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+        String update = "update OtherMonthlyExpenditures set ReasonForExpense = ? where Month = ?";
+        try {
+            Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(update);
+            pstmt.setString(1, ReasonForExpense.getText());
+            pstmt.setString(2, (String)MonthBox2.getSelectionModel().getSelectedItem());
+            pstmt.executeUpdate();
+            ReasonForExpense.setText("");
+            conn.close();
+        } catch (SQLException e) {
+           e.printStackTrace();
+        }
+    }
+    
+    
+    @FXML
+    private TableView<RecurrentExpenditure> tableview;
+    @FXML
+    private TableColumn MonthCol;
+    @FXML
+    private TableColumn WaterCol;
+    @FXML
+    private TableColumn ElectricityCol;
+    @FXML
+    private Button viewTable;
+    
+    @FXML
+    private void createTableNode() {
+        MonthCol.setCellValueFactory(new PropertyValueFactory<>("MonthChoose"));
+        WaterCol.setCellValueFactory(new PropertyValueFactory<>("Water"));
+        ElectricityCol.setCellValueFactory(new PropertyValueFactory<>("Electricity"));
+        
+           
+        try {
+            ObservableList<RecurrentExpenditure> data;
+            data = FXCollections.observableArrayList();
+            String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+            String select = "select * from RecurrentVariableMonthlyExpenditure where Month = ?";
+            Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(select);
+            pstmt.setString(1, (String)MonthBox1.getSelectionModel().getSelectedItem());
+            ResultSet rs = pstmt.executeQuery();
+            
+            while(rs.next()){
+                data.add(new RecurrentExpenditure(
+                        rs.getString("Month"),
+                        rs.getString("WaterBill"),
+                        rs.getString("ElectricityBill")));
+                tableview.setItems(data);
+            }
+           conn.close();
+           rs.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } 
+        
+        
+    }
+    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO

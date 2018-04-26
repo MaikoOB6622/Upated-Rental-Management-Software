@@ -13,6 +13,7 @@ import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.event.ActionEvent;
 
 /**
  *
@@ -42,9 +43,10 @@ public class RentalUI extends Application {
         });
             
         
-        stage.initStyle(StageStyle.TRANSPARENT);
+        stage.initStyle(StageStyle.DECORATED);
         Scene scene = new Scene(root);
         scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+        stage.setTitle("Jatom Apartments Management Software");
         stage.setScene(scene);
         stage.show();
     }

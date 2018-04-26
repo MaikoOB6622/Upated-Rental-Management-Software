@@ -9,48 +9,26 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="485.0" prefWidth="560.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rentalui.FXMLDocumentController">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="485.0" prefWidth="1063.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rentalui.FXMLDocumentController">
    <children>
-      <AnchorPane fx:id="topbar" prefHeight="61.0" prefWidth="560.0" style="-fx-background-color: #3D4956;">
+      <AnchorPane fx:id="topbar" prefHeight="61.0" prefWidth="1063.0" style="-fx-background-color: #3D4956;">
          <children>
             <ImageView fitHeight="45.0" fitWidth="52.0" layoutX="21.0" layoutY="7.0" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="b_House" layoutX="7.0" layoutY="8.0" onMouseClicked="#handleButtonAction" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="b_House" layoutX="14.0" layoutY="14.0" onMouseClicked="#handleButtonAction" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@images/HomeIcon.png" />
                </image>
             </ImageView>
-            <ImageView fx:id="b_Payment" layoutX="151.0" layoutY="8.0" onMouseClicked="#handleButtonAction" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="b_Payment" layoutX="248.0" layoutY="15.0" onMouseClicked="#handleButtonAction" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@images/PaymentDetails.png" />
                </image>
             </ImageView>
-            <ImageView fx:id="b_monthly" layoutX="290.0" layoutY="8.0" onMouseClicked="#handleButtonAction" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="b_monthly" layoutX="482.0" layoutY="15.0" onMouseClicked="#handleButtonAction" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@images/MonthlyCosts.png" />
                </image>
             </ImageView>
-            <ImageView layoutX="440.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@images/CloseProgram.png" />
-               </image>
-            </ImageView>
-         </children></AnchorPane>
-      <AnchorPane fx:id="h_HouseDetails" layoutY="65.0" prefHeight="420.0" prefWidth="560.0" style="-fx-background-color: #3D4956;">
-         <children>
-            <Label layoutX="14.0" layoutY="14.0" prefHeight="32.0" prefWidth="167.0" style="-fx-background-color: grey;" text="  House Number" />
-            <ComboBox fx:id="SelectHouseBox" layoutX="206.0" layoutY="14.0" onAction="#initializeSelectHouseBox" onMouseClicked="#initializeSelectHouseBox" prefHeight="31.0" prefWidth="267.0" promptText="Select from list" />
-            <Label layoutX="14.0" layoutY="70.0" prefHeight="32.0" prefWidth="167.0" style="-fx-background-color: grey;" text="  Tenant Name" />
-            <TextField fx:id="TName" layoutX="206.0" layoutY="70.0" onAction="#getTName" prefHeight="31.0" prefWidth="267.0" />
-            <Label layoutX="14.0" layoutY="126.0" prefHeight="32.0" prefWidth="167.0" style="-fx-background-color: grey;" text="  Repairs Done on house" />
-            <TextField fx:id="Repairs" layoutX="206.0" layoutY="126.0" onAction="#getRepairs" prefHeight="31.0" prefWidth="267.0" />
-            <Label layoutX="14.0" layoutY="182.0" prefHeight="32.0" prefWidth="167.0" style="-fx-background-color: grey;" text="  Cost of Repair" />
-            <TextField fx:id="repairCost" layoutX="206.0" layoutY="182.0" onAction="#getrepairCost" prefHeight="31.0" prefWidth="267.0" />
-            <Label layoutX="14.0" layoutY="238.0" prefHeight="32.0" prefWidth="167.0" style="-fx-background-color: grey;" text="  Miscellaneous Expenses" />
-            <TextField fx:id="miscellaneous" layoutX="206.0" layoutY="238.0" onAction="#getmiscellaneous" prefHeight="31.0" prefWidth="267.0" />
-            <Button fx:id="Submit1" layoutX="151.0" layoutY="323.0" mnemonicParsing="false" onMouseClicked="#TableInsertButton2" prefHeight="31.0" prefWidth="258.0" text="Submit to DB" />
-            <Button fx:id="b_AddRepairs" layoutX="481.0" layoutY="126.0" mnemonicParsing="false" onAction="#handleRepairButton" prefHeight="31.0" prefWidth="52.0" text="Add" />
-            <Button fx:id="b_AddRepairCost" layoutX="481.0" layoutY="182.0" mnemonicParsing="false" onAction="#handlerepairCostButton" prefHeight="31.0" prefWidth="52.0" text="Add" />
-            <Button fx:id="b_AddMiscellaneous" layoutX="481.0" layoutY="238.0" mnemonicParsing="false" onAction="#handlemiscellaneousButton" prefHeight="31.0" prefWidth="52.0" text="Add" />
          </children></AnchorPane>
       <AnchorPane fx:id="h_PaymentDetails" layoutY="65.0" prefHeight="420.0" prefWidth="560.0" style="-fx-background-color: #3D4956;">
          <children>
@@ -58,14 +36,31 @@
             <Label layoutX="14.0" layoutY="70.0" prefHeight="32.0" prefWidth="167.0" style="-fx-background-color: Grey;" text=" Amount Paid " />
             <Label layoutX="14.0" layoutY="182.0" prefHeight="32.0" prefWidth="167.0" style="-fx-background-color: Grey;" text=" Month Rent is For" />
             <Label layoutX="14.0" layoutY="126.0" prefHeight="32.0" prefWidth="167.0" style="-fx-background-color: Grey;" text=" Name of Payee" />
-            <TextField fx:id="Amount" layoutX="206.0" layoutY="70.0" onAction="#getAmount" prefHeight="31.0" prefWidth="267.0" />
-            <TextField fx:id="Name" layoutX="206.0" layoutY="126.0" onAction="#getName" prefHeight="31.0" prefWidth="267.0" />
+            <TextField fx:id="Amount" layoutX="206.0" layoutY="70.0" prefHeight="31.0" prefWidth="267.0" />
+            <TextField fx:id="Name" layoutX="206.0" layoutY="126.0" prefHeight="31.0" prefWidth="267.0" />
             <Button fx:id="Submit" layoutX="98.0" layoutY="303.0" mnemonicParsing="false" onAction="#TableInsertButton" prefHeight="31.0" prefWidth="258.0" text="Submit to DB" />
             <ComboBox fx:id="HouseNumberBox" layoutX="206.0" layoutY="14.0" onMouseClicked="#initializeHNoBox" prefHeight="31.0" prefWidth="267.0" />
             <ComboBox fx:id="MonthBox" layoutX="206.0" layoutY="182.0" onMouseClicked="#initializeMonthBox" prefHeight="31.0" prefWidth="267.0" />
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="h_MonthlyExpenditure" layoutY="65.0" prefHeight="420.0" prefWidth="560.0" style="-fx-background-color: #3D4956;">
+      <AnchorPane fx:id="h_HouseDetails" layoutY="65.0" prefHeight="420.0" prefWidth="560.0" style="-fx-background-color: #3D4956;">
+         <children>
+            <Label layoutX="14.0" layoutY="14.0" prefHeight="32.0" prefWidth="167.0" style="-fx-background-color: grey;" text="  House Number" />
+            <ComboBox fx:id="SelectHouseBox" layoutX="206.0" layoutY="14.0" onAction="#initializeSelectHouseBox" onMouseClicked="#initializeSelectHouseBox" prefHeight="31.0" prefWidth="267.0" promptText="Select from list" />
+            <Label layoutX="14.0" layoutY="70.0" prefHeight="32.0" prefWidth="167.0" style="-fx-background-color: grey;" text="  Tenant Name" />
+            <TextField fx:id="TName" layoutX="206.0" layoutY="70.0" prefHeight="31.0" prefWidth="267.0" />
+            <Label layoutX="14.0" layoutY="126.0" prefHeight="32.0" prefWidth="167.0" style="-fx-background-color: grey;" text="  Repairs Done on house" />
+            <TextField fx:id="Repairs" layoutX="206.0" layoutY="126.0" prefHeight="31.0" prefWidth="267.0" />
+            <Label layoutX="14.0" layoutY="182.0" prefHeight="32.0" prefWidth="167.0" style="-fx-background-color: grey;" text="  Cost of Repair" />
+            <TextField fx:id="repairCost" layoutX="206.0" layoutY="182.0" prefHeight="31.0" prefWidth="267.0" />
+            <Label layoutX="14.0" layoutY="238.0" prefHeight="32.0" prefWidth="167.0" style="-fx-background-color: grey;" text="  Miscellaneous Expenses" />
+            <TextField fx:id="miscellaneous" layoutX="206.0" layoutY="238.0" prefHeight="31.0" prefWidth="267.0" />
+            <Button fx:id="Submit1" layoutX="151.0" layoutY="323.0" mnemonicParsing="false" onMouseClicked="#TableInsertButton2" prefHeight="31.0" prefWidth="258.0" text="Submit to DB" />
+            <Button fx:id="b_AddRepairCost" layoutX="481.0" layoutY="182.0" mnemonicParsing="false" onAction="#handlerepairCostButton" prefHeight="31.0" prefWidth="52.0" text="Add" />
+            <Button fx:id="b_AddMiscellaneous" layoutX="481.0" layoutY="238.0" mnemonicParsing="false" onAction="#handlemiscellaneousButton" prefHeight="31.0" prefWidth="52.0" text="Add" />
+            <Button fx:id="b_AddRepairs" layoutX="481.0" layoutY="126.0" mnemonicParsing="false" onAction="#handleRepairButton" prefHeight="31.0" prefWidth="52.0" text="Add" />
+         </children></AnchorPane>
+      <AnchorPane fx:id="h_MonthlyExpenditure" layoutY="65.0" prefHeight="420.0" prefWidth="1063.0" style="-fx-background-color: #3D4956;">
          <children>
             <Label layoutX="16.0" layoutY="14.0" prefHeight="27.0" prefWidth="371.0" text="Recurrent Variable Monthly Expenditures" textFill="#8f5d5d">
                <font>
@@ -73,23 +68,36 @@
                </font>
             </Label>
             <Label layoutX="16.0" layoutY="89.0" prefHeight="32.0" prefWidth="156.0" style="-fx-background-color: grey;" text="          Water Bill" />
-            <TextField layoutX="201.0" layoutY="129.0" prefHeight="30.0" prefWidth="267.0" />
+            <TextField fx:id="ElectricityBill" layoutX="201.0" layoutY="129.0" prefHeight="30.0" prefWidth="267.0" />
             <Label layoutX="16.0" layoutY="129.0" prefHeight="32.0" prefWidth="156.0" style="-fx-background-color: grey;" text="        Electricity Bill" />
-            <TextField layoutX="201.0" layoutY="89.0" prefHeight="32.0" prefWidth="267.0" />
-            <Label layoutX="14.0" layoutY="182.0" prefHeight="27.0" prefWidth="267.0" text="Other Monthly Expenditures" textFill="#8f5d5d">
+            <TextField fx:id="WaterBill" layoutX="201.0" layoutY="89.0" prefHeight="32.0" prefWidth="267.0" />
+            <Label layoutX="14.0" layoutY="210.0" prefHeight="27.0" prefWidth="267.0" text="Other Monthly Expenditures" textFill="#8f5d5d">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
-            <Label layoutX="14.0" layoutY="217.0" prefHeight="32.0" prefWidth="156.0" style="-fx-background-color: grey;" text="            Month" />
-            <TextField layoutX="201.0" layoutY="297.0" prefHeight="32.0" prefWidth="267.0" promptText="              Ksh" />
-            <Label layoutX="15.0" layoutY="257.0" prefHeight="32.0" prefWidth="156.0" style="-fx-background-color: grey;" text="       Expenditure" />
-            <TextField layoutX="201.0" layoutY="257.0" prefHeight="32.0" prefWidth="267.0" />
-            <Button layoutX="15.0" layoutY="363.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="156.0" text="Submit" />
-            <ComboBox fx:id="HouseNumberBox1" layoutX="201.0" layoutY="49.0" onMouseClicked="#initializeHNoBox" prefHeight="31.0" prefWidth="267.0" />
-            <ComboBox fx:id="HouseNumberBox11" layoutX="201.0" layoutY="217.0" onMouseClicked="#initializeHNoBox" prefHeight="32.0" prefWidth="267.0" />
+            <Label layoutX="14.0" layoutY="245.0" prefHeight="32.0" prefWidth="156.0" style="-fx-background-color: grey;" text="            Month" />
+            <TextField fx:id="ReasonForExpense" layoutX="201.0" layoutY="325.0" prefHeight="32.0" prefWidth="267.0" promptText="              Ksh" />
+            <Label layoutX="14.0" layoutY="285.0" prefHeight="32.0" prefWidth="156.0" style="-fx-background-color: grey;" text="       Expenditure" />
+            <TextField fx:id="Expenditure" layoutX="201.0" layoutY="285.0" prefHeight="32.0" prefWidth="267.0" />
+            <Button fx:id="submit2" layoutX="14.0" layoutY="365.0" mnemonicParsing="false" onAction="#TableInsertButton4" prefHeight="32.0" prefWidth="156.0" text="Submit" />
+            <ComboBox fx:id="MonthBox1" layoutX="201.0" layoutY="49.0" onAction="#initiaiizeMonthBox1" onMouseClicked="#initiaiizeMonthBox1" prefHeight="31.0" prefWidth="267.0" />
+            <ComboBox fx:id="MonthBox2" layoutX="201.0" layoutY="245.0" onAction="#initializeMonthBox2" onMouseClicked="#initializeMonthBox2" prefHeight="32.0" prefWidth="267.0" />
             <Label layoutX="16.0" layoutY="49.0" prefHeight="32.0" prefWidth="156.0" style="-fx-background-color: grey;" text="            Month" />
-            <Label layoutX="14.0" layoutY="297.0" prefHeight="32.0" prefWidth="156.0" style="-fx-background-color: grey;" text="   Reason For Expense" />
+            <Label layoutX="14.0" layoutY="325.0" prefHeight="32.0" prefWidth="156.0" style="-fx-background-color: grey;" text="   Reason For Expense" />
+            <Button fx:id="submit1" layoutX="16.0" layoutY="169.0" mnemonicParsing="false" onAction="#TableInsertButton3" prefHeight="32.0" prefWidth="156.0" text="Submit" />
+            <Button fx:id="b_Expenditure" layoutX="481.0" layoutY="285.0" mnemonicParsing="false" onMouseClicked="#updateExpenditure" prefHeight="31.0" prefWidth="52.0" text="Add" />
+            <Button fx:id="b_ReasonForExpense" layoutX="484.0" layoutY="325.0" mnemonicParsing="false" onMouseClicked="#updateReasonForExpense" prefHeight="31.0" prefWidth="52.0" text="Add" />
+            <Button fx:id="b_updateWater" layoutX="481.0" layoutY="89.0" mnemonicParsing="false" onMouseClicked="#updateWater" prefHeight="31.0" prefWidth="52.0" text="Add" />
+            <Button fx:id="b_updateElectricity" layoutX="481.0" layoutY="129.0" mnemonicParsing="false" onMouseClicked="#updateElectricity" prefHeight="31.0" prefWidth="52.0" text="Add" />
+            <Button fx:id="viewTable" layoutX="481.0" layoutY="50.0" mnemonicParsing="false" onAction="#createTableNode" onMouseClicked="#createTableNode" prefHeight="31.0" prefWidth="115.0" text="View History" />
+            <TableView fx:id="tableview" layoutX="620.0" layoutY="50.0" prefHeight="306.0" prefWidth="434.0">
+              <columns>
+                <TableColumn fx:id="MonthCol" prefWidth="144.0" text="Month" />
+                <TableColumn fx:id="WaterCol" prefWidth="144.0" text="Water Cost" />
+                  <TableColumn fx:id="ElectricityCol" prefWidth="145.0" text="Electricity Cost" />
+              </columns>
+            </TableView>
          </children>
       </AnchorPane>
    </children>
