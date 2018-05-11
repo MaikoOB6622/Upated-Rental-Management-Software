@@ -6,40 +6,60 @@
 package rentalui;
 
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 /**
  *
  * @author Mike
  */
 public class RecurrentExpenditure {
-    public final SimpleStringProperty MonthChoose;
-    public final SimpleStringProperty Water;
-    public final SimpleStringProperty Electricity;
-    
-   public RecurrentExpenditure(String MChoose, String Wat, String Elec){
-       this.MonthChoose = new SimpleStringProperty(MChoose);
-       this.Water = new SimpleStringProperty(Wat);
-       this.Electricity = new SimpleStringProperty(Elec);
-   }
-    
-    public String getMonthChoose(){
-       return MonthChoose.get();
+
+    public final StringProperty MonthChoose;
+    public final StringProperty Water1;
+    public final StringProperty Electricity1;
+
+    //Default constructor
+    public RecurrentExpenditure(String MChoose, String Water, String Electricity) {
+        this.MonthChoose = new SimpleStringProperty(MChoose);
+        this.Water1 = new SimpleStringProperty(Water);
+        this.Electricity1 = new SimpleStringProperty(Electricity);
     }
-    public void setMonthChoose(String MChoose){
-        MonthChoose.set(MChoose);
+
+    //Getters and Setters
+    public String getMonthChoose() {
+        return MonthChoose.get();
     }
-    
-    public String getWater(){
-        return Water.get();
+
+    public void setMonthChoose(String value) {
+        MonthChoose.set(value);
     }
-    public void setWater(String Wat){
-        Water.set(Wat);
+
+    public String getWater() {
+        return Water1.get();
     }
-    
-    public String getElectricity(){
-        return Electricity.get();
+
+    public void setWater(String value) {
+        Water1.set(value);
     }
-    public void setElectricity(String Elec){
-        Electricity.set(Elec);
+
+    public String getElectricity() {
+        return Electricity1.get();
+    }
+
+    public void setElectricity(String value) {
+        Electricity1.set(value);
+    }
+
+    //Property Values
+    public StringProperty monthchooseProperty() {
+        return MonthChoose;
+    }
+
+    public StringProperty waterProperty() {
+        return Water1;
+    }
+
+    public StringProperty electricityProperty() {
+        return Electricity1;
     }
 }

@@ -11,21 +11,15 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -58,6 +52,7 @@ public class FXMLDocumentController implements Initializable {
     private AnchorPane h_MonthlyExpenditure;
     
     
+    
     @FXML
     private void handleButtonAction(MouseEvent event) {
         if (event.getTarget() == b_House) {
@@ -76,6 +71,7 @@ public class FXMLDocumentController implements Initializable {
             h_PaymentDetails.setVisible(false);
         }
     }
+    
     
     ObservableList<String>HouseNumber = FXCollections.observableArrayList("A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "A11", "A12");
     ObservableList<String>MonthPaid = FXCollections.observableArrayList("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
@@ -100,7 +96,7 @@ public class FXMLDocumentController implements Initializable {
     }
     
     @FXML
-    private ComboBox MonthBox1;
+    public ComboBox MonthBox1;
     
     @FXML
     private ComboBox MonthBox2;
@@ -470,12 +466,13 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void updateWater(){
         String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
-        String update = "update RecurrentVariableMonthlyExpenditure set WaterBill = ? where Month = ?";
+        String update = "update RecurrentVariableMonthlyExpenditure set WaterBill = ? where Month = ? and ElectricityBill = ?";
         try {
             Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt = conn.prepareStatement(update);
             pstmt.setString(1, WaterBill.getText());
             pstmt.setString(2, (String)MonthBox1.getSelectionModel().getSelectedItem());
+            pstmt.setString(3, ElectricityBill.getText());
             int executeUpdate = pstmt.executeUpdate();
             if (executeUpdate > 0){
                 System.out.println("Updated");
@@ -491,12 +488,13 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void updateElectricity(){
         String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
-        String update = "update RecurrentVariableMonthlyExpenditure set ElectricityBill = ? where Month = ?";
+        String update = "update RecurrentVariableMonthlyExpenditure set ElectricityBill = ? where Month = ? and WaterBill = ?";
         try {
             Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt = conn.prepareStatement(update);
             pstmt.setString(1, ElectricityBill.getText());
             pstmt.setString(2, (String)MonthBox1.getSelectionModel().getSelectedItem());
+            pstmt.setString(3, WaterBill.getText());
             pstmt.executeUpdate();
             ElectricityBill.setText("");
             conn.close();
@@ -508,12 +506,13 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void updateExpenditure(){
         String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
-        String update = "update OtherMonthlyExpenditures set Expenditure = ? where Month = ?";
+        String update = "update OtherMonthlyExpenditures set Expenditure = ? where Month = ? and ReasonForExpense = ?";
         try {
             Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt = conn.prepareStatement(update);
             pstmt.setString(1, Expenditure.getText());
             pstmt.setString(2, (String)MonthBox2.getSelectionModel().getSelectedItem());
+            pstmt.setString(3, ReasonForExpense.getText());
             pstmt.executeUpdate();
             Expenditure.setText("");
             conn.close();
@@ -525,12 +524,13 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void updateReasonForExpense(){
         String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
-        String update = "update OtherMonthlyExpenditures set ReasonForExpense = ? where Month = ?";
+        String update = "update OtherMonthlyExpenditures set ReasonForExpense = ? where Month = ? and Expenditure = ?";
         try {
             Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt = conn.prepareStatement(update);
             pstmt.setString(1, ReasonForExpense.getText());
             pstmt.setString(2, (String)MonthBox2.getSelectionModel().getSelectedItem());
+            pstmt.setString(3, Expenditure.getText());
             pstmt.executeUpdate();
             ReasonForExpense.setText("");
             conn.close();
@@ -539,25 +539,17 @@ public class FXMLDocumentController implements Initializable {
         }
     }
     
+    @FXML
+    public TableView<RecurrentExpenditure> tableview;
+    @FXML
+    public TableColumn MonthCol;
+    @FXML
+    public TableColumn WaterCol;
+    @FXML
+    public TableColumn ElectricityCol;
     
     @FXML
-    private TableView<RecurrentExpenditure> tableview;
-    @FXML
-    private TableColumn MonthCol;
-    @FXML
-    private TableColumn WaterCol;
-    @FXML
-    private TableColumn ElectricityCol;
-    @FXML
-    private Button viewTable;
-    
-    @FXML
-    private void createTableNode() {
-        MonthCol.setCellValueFactory(new PropertyValueFactory<>("MonthChoose"));
-        WaterCol.setCellValueFactory(new PropertyValueFactory<>("Water"));
-        ElectricityCol.setCellValueFactory(new PropertyValueFactory<>("Electricity"));
-        
-           
+    public void createTableView(){
         try {
             ObservableList<RecurrentExpenditure> data;
             data = FXCollections.observableArrayList();
@@ -566,6 +558,7 @@ public class FXMLDocumentController implements Initializable {
             Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt = conn.prepareStatement(select);
             pstmt.setString(1, (String)MonthBox1.getSelectionModel().getSelectedItem());
+            //Execute query and store result in a result set.
             ResultSet rs = pstmt.executeQuery();
             
             while(rs.next()){
@@ -573,15 +566,18 @@ public class FXMLDocumentController implements Initializable {
                         rs.getString("Month"),
                         rs.getString("WaterBill"),
                         rs.getString("ElectricityBill")));
-                tableview.setItems(data);
             }
-           conn.close();
-           rs.close();
+            //Set cell value factory to tableview
+            MonthCol.setCellValueFactory(new PropertyValueFactory<>("MonthChoose"));
+            WaterCol.setCellValueFactory(new PropertyValueFactory<>("Water"));
+            ElectricityCol.setCellValueFactory(new PropertyValueFactory<>("Electricity"));
+            tableview.setItems(null);
+            tableview.setItems(data);
+            conn.close();
+            rs.close();
         } catch (Exception e) {
             e.printStackTrace();
-        } 
-        
-        
+        }  
     }
     
 
