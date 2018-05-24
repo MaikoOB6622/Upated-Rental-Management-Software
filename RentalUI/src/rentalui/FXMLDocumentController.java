@@ -5,6 +5,7 @@
  */
 package rentalui;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -17,16 +18,17 @@ import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
 
 
 /**
@@ -539,51 +541,52 @@ public class FXMLDocumentController implements Initializable {
         }
     }
     
-    @FXML
-    public TableView<RecurrentExpenditure> tableview;
-    @FXML
-    public TableColumn MonthCol;
-    @FXML
-    public TableColumn WaterCol;
-    @FXML
-    public TableColumn ElectricityCol;
-    
-    @FXML
-    public void createTableView(){
+    public ObservableList<RecurrentExpenditure> getData() {
+        ObservableList<RecurrentExpenditure> data;
+        data = FXCollections.observableArrayList();
         try {
-            ObservableList<RecurrentExpenditure> data;
-            data = FXCollections.observableArrayList();
             String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
             String select = "select * from RecurrentVariableMonthlyExpenditure where Month = ?";
             Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt = conn.prepareStatement(select);
-            pstmt.setString(1, (String)MonthBox1.getSelectionModel().getSelectedItem());
+            pstmt.setString(1, (String) MonthBox1.getSelectionModel().getSelectedItem());
             //Execute query and store result in a result set.
             ResultSet rs = pstmt.executeQuery();
-            
-            while(rs.next()){
-                data.add(new RecurrentExpenditure(
-                        rs.getString("Month"),
-                        rs.getString("WaterBill"),
-                        rs.getString("ElectricityBill")));
+            while (rs.next()) {
+                String M = rs.getString("Month");
+                String W = rs.getString("WaterBill");
+                String E = rs.getString("ElectricityBill");
+                RecurrentExpenditure row = new RecurrentExpenditure(M, W, E);
+                data.add(row);
             }
-            //Set cell value factory to tableview
-            MonthCol.setCellValueFactory(new PropertyValueFactory<>("MonthChoose"));
-            WaterCol.setCellValueFactory(new PropertyValueFactory<>("Water"));
-            ElectricityCol.setCellValueFactory(new PropertyValueFactory<>("Electricity"));
-            tableview.setItems(null);
-            tableview.setItems(data);
             conn.close();
-            rs.close();
+            rs.close(); 
         } catch (Exception e) {
             e.printStackTrace();
-        }  
+        }
+        return data;
     }
     
-
+    
+    //When this method is called, it passes a recurrent expenditure object to tableview
+    @FXML
+    private void tableButton() throws IOException{
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("tabView.fxml"));
+        TabViewController subcontroller = new TabViewController(this);
+        loader.setController(subcontroller);
+        Parent root = loader.load();
+        Scene tablescene = new Scene(root);
+        Stage window = new Stage();
+        window.setScene(tablescene);
+        window.show();
+    }
+    
+    
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-    }    
+    }
     
 }

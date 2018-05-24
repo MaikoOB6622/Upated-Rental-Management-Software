@@ -6,14 +6,11 @@
 package rentalui;
 
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.event.ActionEvent;
 
 /**
  *
@@ -22,26 +19,10 @@ import javafx.event.ActionEvent;
 public class RentalUI extends Application {
     private static double xOffset;
     private static double yOffset;
-    
+    private Stage window;
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
-        root.setOnMousePressed(new EventHandler<MouseEvent>(){
-            
-            @Override
-            public void handle(MouseEvent event){
-                xOffset = event.getSceneX();
-                yOffset = event.getSceneY();
-            }
-        });
-        root.setOnMouseDragged(new EventHandler<MouseEvent>(){
-            @Override
-            public void handle(MouseEvent event){
-                stage.setX(event.getScreenX() - xOffset);
-                stage.setY(event.getScreenY() - yOffset);
-            }
-        });
-            
+        Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));   
         
         stage.initStyle(StageStyle.DECORATED);
         Scene scene = new Scene(root);
@@ -50,7 +31,7 @@ public class RentalUI extends Application {
         stage.setScene(scene);
         stage.show();
     }
-
+    
     /**
      * @param args the command line arguments
      */

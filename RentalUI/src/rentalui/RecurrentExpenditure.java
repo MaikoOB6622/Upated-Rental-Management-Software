@@ -14,9 +14,9 @@ import javafx.beans.property.StringProperty;
  */
 public class RecurrentExpenditure {
 
-    public final StringProperty MonthChoose;
-    public final StringProperty Water1;
-    public final StringProperty Electricity1;
+    public StringProperty MonthChoose;
+    public StringProperty Water1;
+    public StringProperty Electricity1;
 
     //Default constructor
     public RecurrentExpenditure(String MChoose, String Water, String Electricity) {
@@ -29,7 +29,7 @@ public class RecurrentExpenditure {
     public String getMonthChoose() {
         return MonthChoose.get();
     }
-
+    
     public void setMonthChoose(String value) {
         MonthChoose.set(value);
     }
