@@ -9,7 +9,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /**
- *
+ * Creating recurrent expenditure model class
  * @author Mike
  */
 public class RecurrentExpenditure {

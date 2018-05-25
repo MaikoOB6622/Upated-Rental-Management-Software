@@ -567,8 +567,10 @@ public class FXMLDocumentController implements Initializable {
         return data;
     }
     
+    @FXML
+    private Button viewTableRecurrentExpenditure;
     
-    //When this method is called, it passes a recurrent expenditure object to tableview
+    //When this method is called, it passes a recurrent expenditure object to tableview and displays it
     @FXML
     private void tableButton() throws IOException{
         FXMLLoader loader = new FXMLLoader();
@@ -582,7 +584,45 @@ public class FXMLDocumentController implements Initializable {
         window.show();
     }
     
+    public ObservableList<OtherExpenditure> getOtherTableData(){
+        ObservableList<OtherExpenditure>data;
+        data = FXCollections.observableArrayList();
+        try {
+            String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+            String select = "select * from OtherMonthlyExpenditures where Month = ?";
+            Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(select);
+            pstmt.setString(1, (String)MonthBox2.getSelectionModel().getSelectedItem());
+            ResultSet rs = pstmt.executeQuery();
+            while(rs.next()){
+                String Mon = rs.getString("Month");
+                String Exp = rs.getString("Expenditure");
+                String Reas = rs.getString("ReasonForExpense");
+                OtherExpenditure other = new OtherExpenditure(Mon, Exp, Reas);
+                data.add(other);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
     
+    @FXML
+    private Button viewTableOtherExpenditure;
+    
+    //Method called to pass OtherExpenidture object to tableview and displays it.
+    @FXML
+    private void otherexpenditureButton() throws IOException{
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("tableOtherExpenditure.fxml"));
+        TableOtherExpenditureController controller = new TableOtherExpenditureController(this);
+        loader.setController(controller);
+        Parent root = loader.load();
+        Scene othertableScene = new Scene(root);
+        Stage window  = new Stage();
+        window.setScene(othertableScene);
+        window.show();
+    }
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {

@@ -29,7 +29,12 @@ public class TabViewController implements Initializable {
     public TableColumn<RecurrentExpenditure,String> electricityCol;
     
     private final FXMLDocumentController controller;
-    
+    /**
+     * Passing reference to FXMLDocumentController into TabViewController to
+     * allow invoking getData() method from FXMLDocumentController.
+     * @param mainController 
+     */
+   
     public TabViewController(FXMLDocumentController mainController){
         this.controller = mainController;
     }
@@ -45,7 +50,6 @@ public class TabViewController implements Initializable {
         electricityCol.setCellValueFactory(cellData -> cellData.getValue().electricityProperty());
         
         tableView.setItems(controller.getData());
-        tableView.toBack();
     }    
     
 }

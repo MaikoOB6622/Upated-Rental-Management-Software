@@ -90,7 +90,8 @@
             <Button fx:id="b_ReasonForExpense" layoutX="484.0" layoutY="325.0" mnemonicParsing="false" onMouseClicked="#updateReasonForExpense" prefHeight="31.0" prefWidth="52.0" text="Add" />
             <Button fx:id="b_updateWater" layoutX="481.0" layoutY="89.0" mnemonicParsing="false" onMouseClicked="#updateWater" prefHeight="31.0" prefWidth="52.0" text="Add" />
             <Button fx:id="b_updateElectricity" layoutX="481.0" layoutY="129.0" mnemonicParsing="false" onMouseClicked="#updateElectricity" prefHeight="31.0" prefWidth="52.0" text="Add" />
-            <Button fx:id="viewTable" layoutX="481.0" layoutY="50.0" mnemonicParsing="false" onAction="#tableButton" prefHeight="31.0" prefWidth="115.0" text="View History" />
+            <Button fx:id="viewTableRecurrentExpenditure" layoutX="481.0" layoutY="50.0" mnemonicParsing="false" onAction="#tableButton" prefHeight="31.0" prefWidth="115.0" text="View History" />
+            <Button fx:id="viewTableOtherExpenditure" layoutX="484.0" layoutY="246.0" mnemonicParsing="false" onAction="#otherexpenditureButton" prefHeight="31.0" prefWidth="115.0" text="View History" />
          </children>
       </AnchorPane>
    </children>
