@@ -88,6 +88,23 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void initializeHNoBox(){
         HouseNumberBox.setItems(HouseNumber);
+        try {
+            String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+            String select = "select * from JatomApts where HouseNumber = ?";
+            Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(select);
+            pstmt.setString(1, (String)HouseNumberBox.getSelectionModel().getSelectedItem());
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {                
+                Amount.setText(rs.getString("Amount"));
+                Name.setText(rs.getString("PayerName"));
+                MonthBox.setValue(rs.getString("Month"));
+            }
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     
     @FXML
@@ -399,12 +416,13 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void handleRepairButton(){
         String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
-        String update  = "update JatomAptsDetails set RepairsOnHouse = ? where HNumber = ? ";
+        String update  = "update JatomAptsDetails set RepairsOnHouse = ? where HNumber = ? and TenantName = ? ";
         try {
                 Connection conn = DriverManager.getConnection(url);
                 PreparedStatement pstmt = conn.prepareStatement(update);
                 pstmt.setString(1, Repairs.getText());
                 pstmt.setString(2, (String)SelectHouseBox.getSelectionModel().getSelectedItem());
+                pstmt.setString(3, TName.getText());
                 pstmt.executeUpdate();
                 HouseNumberBox.setValue(null);
                 Repairs.setText("");
@@ -422,13 +440,14 @@ public class FXMLDocumentController implements Initializable {
     
     @FXML
     private void handlerepairCostButton(){
-        String update  = "update JatomAptsDetails set CostOfRepair = ? where HNumber = ?";
+        String update  = "update JatomAptsDetails set CostOfRepair = ? where HNumber = ? and TenantName = ?";
         String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
                 try {
                     Connection conn = DriverManager.getConnection(url);
                     PreparedStatement pstmt = conn.prepareStatement(update);
                     pstmt.setString(1, repairCost.getText());
                     pstmt.setString(2, (String)SelectHouseBox.getSelectionModel().getSelectedItem());
+                    pstmt.setString(3, TName.getText());
                     pstmt.executeUpdate();
                     HouseNumberBox.setValue(null);
                     repairCost.setText("");
@@ -446,12 +465,13 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void handlemiscellaneousButton(){
     String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
-    String update = "update JatomAptsDetails set MiscellaneousExpenses = ? where HNumber = ?";   
+    String update = "update JatomAptsDetails set MiscellaneousExpenses = ? where HNumber = ? and TenantName = ?";   
                 try {
                     Connection conn = DriverManager.getConnection(url);
                     PreparedStatement pstmt = conn.prepareStatement(update);
                     pstmt.setString(1, miscellaneous.getText());
                     pstmt.setString(2,(String)SelectHouseBox.getSelectionModel().getSelectedItem() );
+                    pstmt.setString(3, TName.getText());
                     int executeUpdate = pstmt.executeUpdate();
                     HouseNumberBox.setValue(null);
                     miscellaneous.setText("");
@@ -621,6 +641,89 @@ public class FXMLDocumentController implements Initializable {
         Scene othertableScene = new Scene(root);
         Stage window  = new Stage();
         window.setScene(othertableScene);
+        window.show();
+    }
+    
+    @FXML
+    private Button payerDetailsTableButton;
+    
+    public ObservableList<PayerDetails> getPayerDetailsData(){
+        ObservableList<PayerDetails>data;
+        data = FXCollections.observableArrayList();
+        try {
+            String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+            String query = "select * from JatomApts where HouseNumber = ?";
+            Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setString(1, (String)HouseNumberBox.getSelectionModel().getSelectedItem());
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {                
+                String HouseNo = rs.getString("HouseNumber");
+                String Paid   = rs.getString("Amount");
+                String Payer = rs.getString("PayerName");
+                String Month = rs.getString("Month");
+                
+                PayerDetails pay = new PayerDetails(HouseNo, Paid, Payer, Month);
+                data.add(pay);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+    
+    @FXML
+    private void payerDetailsButton()throws IOException{
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("PayerDetailsTable.fxml"));
+        PayerDetailsTableController controller = new PayerDetailsTableController(this);
+        loader.setController(controller);
+        Parent root = loader.load();
+        Scene PayerDetailsScene = new Scene(root);
+        Stage window = new Stage();
+        window.setScene(PayerDetailsScene);
+        window.show();
+    }
+    
+    @FXML
+    private Button viewHouseTableButton;
+    
+    public ObservableList<HouseRepairsModel> getHouseRepairsData(){
+        ObservableList<HouseRepairsModel>data;
+        data = FXCollections.observableArrayList();
+        try {
+            String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+            String select = "select * from JatomAptsDetails where HNumber = ?";
+            Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(select);
+            pstmt.setString(1, (String)SelectHouseBox.getSelectionModel().getSelectedItem());
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {                
+                String H = rs.getString("HNumber");
+                String TN = rs.getString("TenantName");
+                String R = rs.getString("RepairsOnHouse");
+                String RC = rs.getString("CostOfRepair");
+                String M = rs.getString("MiscellaneousExpenses");
+                
+                HouseRepairsModel rm = new HouseRepairsModel(H, TN, R, RC, M);
+                data.add(rm);
+            }
+        } catch (Exception e) {
+        }
+        return data;
+    }
+    
+    @FXML
+    private void houseRepairTableButton() throws IOException{
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("HouseRepairsTable.fxml"));
+        HouseRepairsTableController controller = new HouseRepairsTableController(this);
+        loader.setController(controller);
+        Parent root = loader.load();
+        Scene repairtableScene = new Scene(root);
+        Stage window = new Stage();
+        window.setScene(repairtableScene);
         window.show();
     }
     
