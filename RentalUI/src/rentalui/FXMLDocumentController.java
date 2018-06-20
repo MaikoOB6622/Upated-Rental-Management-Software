@@ -39,7 +39,10 @@ import javafx.stage.Stage;
  */
 public class FXMLDocumentController implements Initializable {
     
-    
+    @FXML
+    private AnchorPane motherPane;
+    @FXML
+    private AnchorPane topbar;
     @FXML
     private ImageView b_Payment;
     @FXML
@@ -52,9 +55,7 @@ public class FXMLDocumentController implements Initializable {
     private AnchorPane h_HouseDetails;
     @FXML
     private AnchorPane h_MonthlyExpenditure;
-    
-    
-    
+   
     @FXML
     private void handleButtonAction(MouseEvent event) {
         if (event.getTarget() == b_House) {
@@ -729,7 +730,13 @@ public class FXMLDocumentController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        h_HouseDetails.prefWidthProperty().bind(motherPane.widthProperty());
+        h_PaymentDetails.prefWidthProperty().bind(motherPane.widthProperty());
+        h_MonthlyExpenditure.prefWidthProperty().bind(motherPane.widthProperty());
+        topbar.prefWidthProperty().bind(motherPane.widthProperty());
+        h_HouseDetails.prefHeightProperty().bind(motherPane.heightProperty());
+        h_PaymentDetails.prefHeightProperty().bind(motherPane.heightProperty());
+        h_MonthlyExpenditure.prefHeightProperty().bind(motherPane.heightProperty());
     }
     
 }
