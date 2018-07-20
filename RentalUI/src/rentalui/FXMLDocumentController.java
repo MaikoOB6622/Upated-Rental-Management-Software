@@ -17,17 +17,23 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 
@@ -55,6 +61,10 @@ public class FXMLDocumentController implements Initializable {
     private AnchorPane h_HouseDetails;
     @FXML
     private AnchorPane h_MonthlyExpenditure;
+    @FXML
+    private TitledPane HouseBlocks;
+    
+    
    
     @FXML
     private void handleButtonAction(MouseEvent event) {
@@ -75,13 +85,14 @@ public class FXMLDocumentController implements Initializable {
         }
     }
     
-    
+    ObservableList<String>HouseNumber2 = FXCollections.observableArrayList("B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "B10", "B11", "B12");
     ObservableList<String>HouseNumber = FXCollections.observableArrayList("A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "A11", "A12");
+    ObservableList<String>HouseNumber3 = FXCollections.observableArrayList("C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10");
+    ObservableList<String>HouseNumber4 = FXCollections.observableArrayList("Top House", "Bottom House");
     ObservableList<String>MonthPaid = FXCollections.observableArrayList("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
     
     @FXML
     private ComboBox SelectHouseBox;
-    
     
     
     @FXML
@@ -326,28 +337,127 @@ public class FXMLDocumentController implements Initializable {
     }
     
     @FXML
+    private ComboBox SelectBlockB;
+    @FXML
+    private void initializeSelectBlockB(){
+        SelectBlockB.setItems(HouseNumber2);
+        try {
+            String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+            String select = "select * from JatomAptsDetails where HNumber = ?";
+            Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(select);
+            pstmt.setString(1, (String)SelectBlockB.getSelectionModel().getSelectedItem());
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {                
+                TName.setText(rs.getString("TenantName"));
+                Repairs.setText(rs.getString("RepairsOnHouse"));
+                repairCost.setText(rs.getString("CostOfRepair"));
+                miscellaneous.setText(rs.getString("MiscellaneousExpenses"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    @FXML
+    private ComboBox SelectBlockC;
+    @FXML
+    private void initializeSelectBlockC(){
+        SelectBlockC.setItems(HouseNumber3);
+        try {
+            String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+            String select = "select * from JatomAptsDetails where HNumber = ?";
+            Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(select);
+            pstmt.setString(1, (String)SelectBlockC.getSelectionModel().getSelectedItem());
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {                
+                TName.setText(rs.getString("TenantName"));
+                Repairs.setText(rs.getString("RepairsOnHouse"));
+                repairCost.setText(rs.getString("CostOfRepair"));
+                miscellaneous.setText(rs.getString("MiscellaneousExpenses"));
+            }
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    @FXML
+    private ComboBox SelectNasraBlock;
+    @FXML
+    private void initializeSelectNasraBlock(){
+        SelectNasraBlock.setItems(HouseNumber4);
+        try {
+            String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+            String select = "select * from JatomAptsDetails where HNumber = ?";
+            Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(select);
+            pstmt.setString(1, (String)SelectNasraBlock.getSelectionModel().getSelectedItem());
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {                
+                TName.setText(rs.getString("TenantName"));
+                Repairs.setText(rs.getString("RepairsOnHouse"));
+                repairCost.setText(rs.getString("CostOfRepair"));
+                miscellaneous.setText(rs.getString("MiscellaneousExpenses"));
+            }
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    EventHandler<MouseEvent> filter = new EventHandler<MouseEvent>() {
+        @Override
+                public void handle(MouseEvent event) {
+                    if (!SelectHouseBox.getSelectionModel().isEmpty()){
+                        Label label = new Label();
+                        label.setText((String) SelectHouseBox.getSelectionModel().getSelectedItem());
+                        HouseBlocks.setGraphic(label);
+                    }
+                }
+            };
+    
+    @FXML
     private void initializeSelectHouseBox(){
+        
         SelectHouseBox.setItems(HouseNumber);
+        
+        
        try {
             String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
             String query = "select * from JatomAptsDetails where HNumber = ?";
             Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt = conn.prepareStatement(query);
             pstmt.setString(1, (String)SelectHouseBox.getSelectionModel().getSelectedItem());
-            ResultSet rs = pstmt.executeQuery();
             
+            ResultSet rs = pstmt.executeQuery();
+           
             while(rs.next()){
                  TName.setText(rs.getString("TenantName"));
                  Repairs.setText(rs.getString("RepairsOnHouse"));
                  repairCost.setText(rs.getString("CostOfRepair"));
                  miscellaneous.setText(rs.getString("MiscellaneousExpenses"));
             }
+            SelectHouseBox.setOnAction(e -> {
+               HouseBlocks.addEventFilter(MouseEvent.MOUSE_CLICKED, filter);
+               HouseBlocks.setExpanded(false);
+           });
+
             conn.close();
         } catch (SQLException ex) {
             Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+       
     }
     
+    
+    
+         
     @FXML
     private void initiaiizeMonthBox1(){
         MonthBox1.setItems(MonthPaid);
@@ -737,6 +847,9 @@ public class FXMLDocumentController implements Initializable {
         h_HouseDetails.prefHeightProperty().bind(motherPane.heightProperty());
         h_PaymentDetails.prefHeightProperty().bind(motherPane.heightProperty());
         h_MonthlyExpenditure.prefHeightProperty().bind(motherPane.heightProperty());
+        
+        HouseBlocks.setExpanded(false);
+        HouseBlocks.setAnimated(true);
     }
     
 }
