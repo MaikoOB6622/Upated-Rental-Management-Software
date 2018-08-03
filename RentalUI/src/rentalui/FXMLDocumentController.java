@@ -15,8 +15,10 @@ import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -337,27 +339,15 @@ public class FXMLDocumentController implements Initializable {
     }
     
     @FXML
+    private void initializeSelectHouseBox() {
+        SelectHouseBox.setItems(HouseNumber);   
+    }
+    
+    @FXML
     private ComboBox SelectBlockB;
     @FXML
     private void initializeSelectBlockB(){
         SelectBlockB.setItems(HouseNumber2);
-        try {
-            String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
-            String select = "select * from JatomAptsDetails where HNumber = ?";
-            Connection conn = DriverManager.getConnection(url);
-            PreparedStatement pstmt = conn.prepareStatement(select);
-            pstmt.setString(1, (String)SelectBlockB.getSelectionModel().getSelectedItem());
-            ResultSet rs = pstmt.executeQuery();
-            
-            while (rs.next()) {                
-                TName.setText(rs.getString("TenantName"));
-                Repairs.setText(rs.getString("RepairsOnHouse"));
-                repairCost.setText(rs.getString("CostOfRepair"));
-                miscellaneous.setText(rs.getString("MiscellaneousExpenses"));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
     
     @FXML
@@ -384,7 +374,7 @@ public class FXMLDocumentController implements Initializable {
             e.printStackTrace();
         }
     }
-    
+   
     @FXML
     private ComboBox SelectNasraBlock;
     @FXML
@@ -410,54 +400,7 @@ public class FXMLDocumentController implements Initializable {
         }
     }
 
-    EventHandler<MouseEvent> filter = new EventHandler<MouseEvent>() {
-        @Override
-                public void handle(MouseEvent event) {
-                    if (!SelectHouseBox.getSelectionModel().isEmpty()){
-                        Label label = new Label();
-                        label.setText((String) SelectHouseBox.getSelectionModel().getSelectedItem());
-                        HouseBlocks.setGraphic(label);
-                    }
-                }
-            };
     
-    @FXML
-    private void initializeSelectHouseBox(){
-        
-        SelectHouseBox.setItems(HouseNumber);
-        
-        
-       try {
-            String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
-            String query = "select * from JatomAptsDetails where HNumber = ?";
-            Connection conn = DriverManager.getConnection(url);
-            PreparedStatement pstmt = conn.prepareStatement(query);
-            pstmt.setString(1, (String)SelectHouseBox.getSelectionModel().getSelectedItem());
-            
-            ResultSet rs = pstmt.executeQuery();
-           
-            while(rs.next()){
-                 TName.setText(rs.getString("TenantName"));
-                 Repairs.setText(rs.getString("RepairsOnHouse"));
-                 repairCost.setText(rs.getString("CostOfRepair"));
-                 miscellaneous.setText(rs.getString("MiscellaneousExpenses"));
-            }
-            SelectHouseBox.setOnAction(e -> {
-               HouseBlocks.addEventFilter(MouseEvent.MOUSE_CLICKED, filter);
-               HouseBlocks.setExpanded(false);
-           });
-
-            conn.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-       
-    }
-    
-    
-    
-         
     @FXML
     private void initiaiizeMonthBox1(){
         MonthBox1.setItems(MonthPaid);
@@ -838,6 +781,12 @@ public class FXMLDocumentController implements Initializable {
         window.show();
     }
     
+    
+    
+    
+    
+         
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         h_HouseDetails.prefWidthProperty().bind(motherPane.widthProperty());
@@ -847,9 +796,65 @@ public class FXMLDocumentController implements Initializable {
         h_HouseDetails.prefHeightProperty().bind(motherPane.heightProperty());
         h_PaymentDetails.prefHeightProperty().bind(motherPane.heightProperty());
         h_MonthlyExpenditure.prefHeightProperty().bind(motherPane.heightProperty());
-        
+
+        HouseBlocks.setOnMouseClicked((MouseEvent e) -> {
+            SelectHouseBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                Label label = new Label();
+                label.setText((String) SelectHouseBox.getSelectionModel().getSelectedItem());
+                try {
+                    String ur = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+                    String query = "select * from JatomAptsDetails where HNumber = ?";
+                    Connection conn = DriverManager.getConnection(ur);
+                    PreparedStatement pstmt = conn.prepareStatement(query);
+                    pstmt.setString(1, (String) SelectHouseBox.getSelectionModel().getSelectedItem());
+                    ResultSet rs = pstmt.executeQuery();
+                    
+                    while (rs.next()) {
+                        TName.setText(rs.getString("TenantName"));
+                        Repairs.setText(rs.getString("RepairsOnHouse"));
+                        repairCost.setText(rs.getString("CostOfRepair"));
+                        miscellaneous.setText(rs.getString("MiscellaneousExpenses"));
+                    }
+                    HouseBlocks.setGraphic(label);
+                    conn.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                HouseBlocks.setExpanded(false);
+                Platform.runLater(() -> {
+                    
+                    SelectHouseBox.setItems(HouseNumber);
+                });
+            });
+            SelectBlockB.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                Label label = new Label();
+                label.setText((String) SelectBlockB.getSelectionModel().getSelectedItem());
+                try {
+                    String url1 = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+                    String select = "select * from JatomAptsDetails where HNumber = ?";
+                    Connection conn = DriverManager.getConnection(url1);
+                    PreparedStatement pstmt = conn.prepareStatement(select);
+                    pstmt.setString(1, (String) SelectBlockB.getSelectionModel().getSelectedItem());
+                    ResultSet rs = pstmt.executeQuery();
+                    while (rs.next()) {
+                        TName.setText(rs.getString("TenantName"));
+                        Repairs.setText(rs.getString("RepairsOnHouse"));
+                        repairCost.setText(rs.getString("CostOfRepair"));
+                        miscellaneous.setText(rs.getString("MiscellaneousExpenses"));
+                    }
+                    HouseBlocks.setGraphic(label);
+                    conn.close();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                HouseBlocks.setExpanded(false);
+            });
+            
+        });
+
         HouseBlocks.setExpanded(false);
         HouseBlocks.setAnimated(true);
+
     }
-    
+
 }
