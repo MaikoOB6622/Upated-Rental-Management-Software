@@ -41,7 +41,7 @@ import javafx.stage.Stage;
 
 /**
  *This is a simple rental schedule recording program that gets input 
- *from the user and saves the data to sqlite database.
+ *from the user and saves the data to SQlite database.
  * 
  * @author Mike
  */
@@ -64,7 +64,15 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private AnchorPane h_MonthlyExpenditure;
     @FXML
+    private AnchorPane titledPaneAnchor;
+    @FXML
     private TitledPane HouseBlocks;
+    @FXML
+    private TitledPane HouseBlocks2;
+    @FXML
+    private ImageView b_TenantDetails;
+    @FXML
+    private AnchorPane h_TenantDetails;
     
     
    
@@ -74,15 +82,21 @@ public class FXMLDocumentController implements Initializable {
             h_HouseDetails.setVisible(true);
             h_PaymentDetails.setVisible(false);
             h_MonthlyExpenditure.setVisible(false);
-        } else 
-        if (event.getTarget() == b_Payment){
+            h_TenantDetails.setVisible(false);
+        } else if (event.getTarget() == b_Payment) {
             h_PaymentDetails.setVisible(true);
             h_HouseDetails.setVisible(false);
             h_MonthlyExpenditure.setVisible(false);
-        }else
-        if (event.getTarget() == b_monthly){
+            h_TenantDetails.setVisible(false);
+        } else if (event.getTarget() == b_monthly) {
             h_MonthlyExpenditure.setVisible(true);
             h_HouseDetails.setVisible(false);
+            h_PaymentDetails.setVisible(false);
+            h_TenantDetails.setVisible(false);
+        } else if (event.getTarget() == b_TenantDetails){
+            h_TenantDetails.setVisible(true);
+            h_HouseDetails.setVisible(false);
+            h_MonthlyExpenditure.setVisible(false);
             h_PaymentDetails.setVisible(false);
         }
     }
@@ -92,10 +106,6 @@ public class FXMLDocumentController implements Initializable {
     ObservableList<String>HouseNumber3 = FXCollections.observableArrayList("C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10");
     ObservableList<String>HouseNumber4 = FXCollections.observableArrayList("Top House", "Bottom House");
     ObservableList<String>MonthPaid = FXCollections.observableArrayList("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
-    
-    @FXML
-    private ComboBox SelectHouseBox;
-    
     
     @FXML
     private ComboBox HouseNumberBox;
@@ -165,6 +175,33 @@ public class FXMLDocumentController implements Initializable {
     private TextField ReasonForExpense;
     
     @FXML
+    private TextField TNameDetails;
+    
+    @FXML
+    private TextField TenantPhoneNumber;
+    
+    @FXML
+    private TextField RentAmount;
+    
+    @FXML
+    private TextField DueDate;
+    
+    @FXML
+    private TextField RentDeposit;
+    
+    @FXML
+    private TextField MoveInDate;
+    
+    @FXML
+    private TextField MoveOutDate;
+    
+    @FXML
+    private TextField LeaseStartDate;
+    
+    @FXML
+    private TextField LeaseEndDate;
+    
+    @FXML
     private void createTable(String HouseNumber, String Amount, String PayerName, String Month){
         String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
         String sql = "CREATE TABLE IF NOT EXISTS JatomApts (\n"
@@ -198,15 +235,10 @@ public class FXMLDocumentController implements Initializable {
         }  
     }
     
-    private void createTable2(String HNumber, String TenantName, String RepairsOnHouse, String CostOfRepair, String MiscellaneousExpenses){
+    @FXML
+    private void foreignKeyTableTest(){
         String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
-        String sql2 = "CREATE TABLE IF NOT EXISTS JatomAptsDetails (\n"
-                +"HNumber text, \n"
-                +"TenantName text, \n"
-                +"RepairsOnHouse text, \n"
-                +"CostOfRepair text, \n"
-                +"MiscellaneousExpenses\n"
-                +");";
+        String sql2 = "CREATE TABLE IF NOT EXISTS JatomAptsDetails (HNumber text PRIMARY KEY, TenantName text, RepairsOnHouse text, CostOfRepair text, MiscellaneousExpenses text, FOREIGN KEY (TenantName) REFERENCES JatomApts (HouseNumber))";
         try {
             Connection conn = DriverManager.getConnection(url);
             PreparedStatement stmt = conn.prepareStatement(sql2);
@@ -214,6 +246,19 @@ public class FXMLDocumentController implements Initializable {
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+    
+    private void createTable2(String HNumber, String TenantName, String RepairsOnHouse, String CostOfRepair, String MiscellaneousExpenses){
+        String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+        String sql2 = "CREATE TABLE IF NOT EXISTS JatomAptsDetails (HNumber text PRIMARY KEY, TenantName text, RepairsOnHouse text, CostOfRepair text, MiscellaneousExpenses text, FOREIGN KEY (TenantName) REFERENCES JatomApts (HouseNumber))";
+       try {
+            Connection conn = DriverManager.getConnection(url);
+            PreparedStatement stmt = conn.prepareStatement(sql2);
+            stmt.executeUpdate();
+            conn.close();
+        } catch (SQLException e) {
+            System.out.println("Error while saving to database. Please ensure there is no tenant entry for house number");
         }
         
         String sql3 = "INSERT INTO JatomAptsDetails (HNumber, TenantName, RepairsOnHouse, CostOfRepair, MiscellaneousExpenses) VALUES(?,?,?,?,?)";
@@ -229,7 +274,7 @@ public class FXMLDocumentController implements Initializable {
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        } 
     }
     
     
@@ -295,6 +340,93 @@ public class FXMLDocumentController implements Initializable {
         }
     }
     
+    private void createTenantDetailstable (String HouseNumber, String TenantName, String TenantPhoneNumber, String RentAmount, String DueDate, String Deposit, String MoveInDate, String MoveOutDate, String LeaseStartDate, String LeaseEndDate){
+        String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+        String sql = "CREATE TABLE IF NOT EXISTS JatomTenantDetails (HouseNumber text, TenantName text, TenantPhoneNumber text, RentAmount text, DueDate text, Deposit text, MoveInDate text, MoveOutDate text, LeaseStartDate text, LeaseEndDate text)";
+        try {
+            Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.execute();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        String sql1 = "INSERT INTO JatomTenantDetails (HouseNumber, TenantName, TenantPhoneNumber, RentAmount, DueDate, Deposit, MoveInDate, MoveOutDate, LeaseStartDate, LeaseEndDate) VALUES(?,?,?,?,?,?,?,?,?,?)";
+        try {
+            Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(sql1);
+            pstmt.setString(1, HouseNumber);
+            pstmt.setString(2, TenantName);
+            pstmt.setString(3, TenantPhoneNumber);
+            pstmt.setString(4, RentAmount);
+            pstmt.setString(5, DueDate);
+            pstmt.setString(6, Deposit);
+            pstmt.setString(7, MoveInDate);
+            pstmt.setString(8, MoveOutDate);
+            pstmt.setString(9, LeaseStartDate);
+            pstmt.setString(10, LeaseEndDate);
+            pstmt.execute();
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    @FXML
+    private void tableInsertTenantDetails(){
+        if (checkComboBoxDetails == "BlockA"){
+            this.createTenantDetailstable((String) selectHouseBoxDetails.getSelectionModel().getSelectedItem(), TNameDetails.getText(), TenantPhoneNumber.getText(), RentAmount.getText(), DueDate.getText(), RentDeposit.getText(), MoveInDate.getText(), MoveOutDate.getText(), LeaseStartDate.getText(), LeaseEndDate.getText());
+            selectHouseBoxDetails.setValue(null);
+            TNameDetails.setText("");
+            TenantPhoneNumber.setText("");
+            RentAmount.setText("");
+            DueDate.setText("");
+            RentDeposit.setText("");
+            MoveInDate.setText("");
+            MoveOutDate.setText("");
+            LeaseStartDate.setText("");
+            LeaseEndDate.setText("");
+        }else if (checkComboBoxDetails == "BlockB") {
+            this.createTenantDetailstable((String)selectBlockBDetails.getSelectionModel().getSelectedItem(), TNameDetails.getText(), TenantPhoneNumber.getText(), RentAmount.getText(), DueDate.getText(), RentDeposit.getText(), MoveInDate.getText(), MoveOutDate.getText(), LeaseStartDate.getText(), LeaseEndDate.getText());
+            selectBlockBDetails.setValue(null);
+            TNameDetails.setText("");
+            TenantPhoneNumber.setText("");
+            RentAmount.setText("");
+            DueDate.setText("");
+            RentDeposit.setText("");
+            MoveInDate.setText("");
+            MoveOutDate.setText("");
+            LeaseStartDate.setText("");
+            LeaseEndDate.setText("");
+             
+        }else if (checkComboBoxDetails == "BlockC"){
+            this.createTenantDetailstable((String) selectBlockCDetails.getSelectionModel().getSelectedItem(), TNameDetails.getText(), TenantPhoneNumber.getText(), RentAmount.getText(), DueDate.getText(), RentDeposit.getText(), MoveInDate.getText(), MoveOutDate.getText(), LeaseStartDate.getText(), LeaseEndDate.getText());
+            selectBlockCDetails.setValue(null);
+            TNameDetails.setText("");
+            TenantPhoneNumber.setText("");
+            RentAmount.setText("");
+            DueDate.setText("");
+            RentDeposit.setText("");
+            MoveInDate.setText("");
+            MoveOutDate.setText("");
+            LeaseStartDate.setText("");
+            LeaseEndDate.setText("");
+        }else if (checkComboBoxDetails == "NasraBlock"){
+            this.createTenantDetailstable((String) selectNasraBlockDetails.getSelectionModel().getSelectedItem(), TNameDetails.getText(), TenantPhoneNumber.getText(), RentAmount.getText(), DueDate.getText(), RentDeposit.getText(), MoveInDate.getText(), MoveOutDate.getText(), LeaseStartDate.getText(), LeaseEndDate.getText());
+            selectNasraBlockDetails.setValue(null);
+            TNameDetails.setText("");
+            TenantPhoneNumber.setText("");
+            RentAmount.setText("");
+            DueDate.setText("");
+            RentDeposit.setText("");
+            MoveInDate.setText("");
+            MoveOutDate.setText("");
+            LeaseStartDate.setText("");
+            LeaseEndDate.setText("");
+        }
+        
+    }
+    
     @FXML
     private Button submit2;
     @FXML
@@ -318,13 +450,37 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Button Submit1;
     @FXML
-    private void TableInsertButton2(){
-        this.createTable2((String)SelectHouseBox.getSelectionModel().getSelectedItem(), TName.getText(), Repairs.getText(), repairCost.getText(), miscellaneous.getText());
-        SelectHouseBox.setValue(null);
-        TName.setText("");
-        Repairs.setText("");
-        repairCost.setText("");
-        miscellaneous.setText("");
+    private void TableInsertButton2() {
+        if (checkComboBox == "BlockA") {
+            this.createTable2((String) SelectHouseBox.getSelectionModel().getSelectedItem(), TName.getText(), Repairs.getText(), repairCost.getText(), miscellaneous.getText());
+            SelectHouseBox.setValue(null);
+            TName.setText("");
+            Repairs.setText("");
+            repairCost.setText("");
+            miscellaneous.setText("");
+        }else if (checkComboBox == "BlockB"){
+            this.createTable2((String)SelectBlockB.getSelectionModel().getSelectedItem(), TName.getText(), Repairs.getText(), repairCost.getText(), miscellaneous.getText());
+            SelectBlockB.setValue(null);
+            TName.setText("");
+            Repairs.setText("");
+            repairCost.setText("");
+            miscellaneous.setText("");
+        }else if (checkComboBox == "BlockC"){
+            this.createTable2((String)SelectBlockC.getSelectionModel().getSelectedItem(), TName.getText(), Repairs.getText(), repairCost.getText(), miscellaneous.getText());
+            SelectBlockC.setValue(null);
+            TName.setText("");
+            Repairs.setText("");
+            repairCost.setText("");
+            miscellaneous.setText("");
+        }else if (checkComboBox == "NasraBlock"){
+            this.createTable2((String)SelectNasraBlock.getSelectionModel().getSelectedItem(), TName.getText(), Repairs.getText(), repairCost.getText(), miscellaneous.getText());
+            SelectNasraBlock.setValue(null);
+            TName.setText("");
+            Repairs.setText("");
+            repairCost.setText("");
+            miscellaneous.setText("");
+        }
+
     }
     
     @FXML
@@ -338,6 +494,8 @@ public class FXMLDocumentController implements Initializable {
         MonthBox.setValue(null);
     }
     
+    @FXML
+    private ComboBox SelectHouseBox;
     @FXML
     private void initializeSelectHouseBox() {
         SelectHouseBox.setItems(HouseNumber);   
@@ -354,25 +512,7 @@ public class FXMLDocumentController implements Initializable {
     private ComboBox SelectBlockC;
     @FXML
     private void initializeSelectBlockC(){
-        SelectBlockC.setItems(HouseNumber3);
-        try {
-            String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
-            String select = "select * from JatomAptsDetails where HNumber = ?";
-            Connection conn = DriverManager.getConnection(url);
-            PreparedStatement pstmt = conn.prepareStatement(select);
-            pstmt.setString(1, (String)SelectBlockC.getSelectionModel().getSelectedItem());
-            ResultSet rs = pstmt.executeQuery();
-            
-            while (rs.next()) {                
-                TName.setText(rs.getString("TenantName"));
-                Repairs.setText(rs.getString("RepairsOnHouse"));
-                repairCost.setText(rs.getString("CostOfRepair"));
-                miscellaneous.setText(rs.getString("MiscellaneousExpenses"));
-            }
-            conn.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        SelectBlockC.setItems(HouseNumber3); 
     }
    
     @FXML
@@ -380,24 +520,35 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void initializeSelectNasraBlock(){
         SelectNasraBlock.setItems(HouseNumber4);
-        try {
-            String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
-            String select = "select * from JatomAptsDetails where HNumber = ?";
-            Connection conn = DriverManager.getConnection(url);
-            PreparedStatement pstmt = conn.prepareStatement(select);
-            pstmt.setString(1, (String)SelectNasraBlock.getSelectionModel().getSelectedItem());
-            ResultSet rs = pstmt.executeQuery();
-            
-            while (rs.next()) {                
-                TName.setText(rs.getString("TenantName"));
-                Repairs.setText(rs.getString("RepairsOnHouse"));
-                repairCost.setText(rs.getString("CostOfRepair"));
-                miscellaneous.setText(rs.getString("MiscellaneousExpenses"));
-            }
-            conn.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        
+    }
+    
+    @FXML
+    private ComboBox selectHouseBoxDetails;
+    @FXML
+    private void initializeHouseBoxDetails(){
+        selectHouseBoxDetails.setItems(HouseNumber);
+    }
+    
+    @FXML
+    private ComboBox selectBlockBDetails;
+    @FXML
+    private void initializeBlockBDetails(){
+        selectBlockBDetails.setItems(HouseNumber2);
+    }
+    
+    @FXML
+    private ComboBox selectBlockCDetails;
+    @FXML
+    private void initializeBlockCDetails(){
+        selectBlockCDetails.setItems(HouseNumber3);
+    }
+    
+    @FXML
+    private ComboBox selectNasraBlockDetails;
+    @FXML
+    private void initializeNasraBlockDetails(){
+        selectNasraBlockDetails.setItems(HouseNumber4);
     }
 
     
@@ -742,28 +893,101 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Button viewHouseTableButton;
     
-    public ObservableList<HouseRepairsModel> getHouseRepairsData(){
-        ObservableList<HouseRepairsModel>data;
+    String checkComboBox;
+    String checkComboBoxDetails;
+    
+    public ObservableList<HouseRepairsModel> getHouseRepairsData() {
+        
+        ObservableList<HouseRepairsModel> data;
         data = FXCollections.observableArrayList();
-        try {
-            String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
-            String select = "select * from JatomAptsDetails where HNumber = ?";
-            Connection conn = DriverManager.getConnection(url);
-            PreparedStatement pstmt = conn.prepareStatement(select);
-            pstmt.setString(1, (String)SelectHouseBox.getSelectionModel().getSelectedItem());
-            ResultSet rs = pstmt.executeQuery();
-            
-            while (rs.next()) {                
-                String H = rs.getString("HNumber");
-                String TN = rs.getString("TenantName");
-                String R = rs.getString("RepairsOnHouse");
-                String RC = rs.getString("CostOfRepair");
-                String M = rs.getString("MiscellaneousExpenses");
-                
-                HouseRepairsModel rm = new HouseRepairsModel(H, TN, R, RC, M);
-                data.add(rm);
+        if (checkComboBox == "BlockA") {
+            try {
+                String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+                String select = "select * from JatomAptsDetails where HNumber = ?";
+                Connection conn = DriverManager.getConnection(url);
+                PreparedStatement pstmt = conn.prepareStatement(select);
+                pstmt.setString(1, (String) SelectHouseBox.getSelectionModel().getSelectedItem());
+                ResultSet rs = pstmt.executeQuery();
+
+                while (rs.next()) {
+                    String H = rs.getString("HNumber");
+                    String TN = rs.getString("TenantName");
+                    String R = rs.getString("RepairsOnHouse");
+                    String RC = rs.getString("CostOfRepair");
+                    String M = rs.getString("MiscellaneousExpenses");
+
+                    HouseRepairsModel rm = new HouseRepairsModel(H, TN, R, RC, M);
+                    data.add(rm);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
+        } else if (checkComboBox == "BlockB") {
+            try {
+                String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+                String select = "select * from JatomAptsDetails where HNumber = ?";
+                Connection conn = DriverManager.getConnection(url);
+                PreparedStatement pstmt = conn.prepareStatement(select);
+                pstmt.setString(1, (String) SelectBlockB.getSelectionModel().getSelectedItem());
+                ResultSet rs = pstmt.executeQuery();
+
+                while (rs.next()) {
+                    String H = rs.getString("HNumber");
+                    String TN = rs.getString("TenantName");
+                    String R = rs.getString("RepairsOnHouse");
+                    String RC = rs.getString("CostOfRepair");
+                    String M = rs.getString("MiscellaneousExpenses");
+
+                    HouseRepairsModel rm = new HouseRepairsModel(H, TN, R, RC, M);
+                    data.add(rm);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else if (checkComboBox == "BlockC"){
+            try {
+                String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+                String select = "select * from JatomAptsDetails where HNumber = ?";
+                Connection conn = DriverManager.getConnection(url);
+                PreparedStatement pstmt = conn.prepareStatement(select);
+                pstmt.setString(1, (String) SelectBlockC.getSelectionModel().getSelectedItem());
+                ResultSet rs = pstmt.executeQuery();
+
+                while (rs.next()) {
+                    String H = rs.getString("HNumber");
+                    String TN = rs.getString("TenantName");
+                    String R = rs.getString("RepairsOnHouse");
+                    String RC = rs.getString("CostOfRepair");
+                    String M = rs.getString("MiscellaneousExpenses");
+
+                    HouseRepairsModel rm = new HouseRepairsModel(H, TN, R, RC, M);
+                    data.add(rm);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else if (checkComboBox == "NasraBlock"){
+            try {
+                String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+                String select = "select * from JatomAptsDetails where HNumber = ?";
+                Connection conn = DriverManager.getConnection(url);
+                PreparedStatement pstmt = conn.prepareStatement(select);
+                pstmt.setString(1, (String) SelectNasraBlock.getSelectionModel().getSelectedItem());
+                ResultSet rs = pstmt.executeQuery();
+
+                while (rs.next()) {
+                    String H = rs.getString("HNumber");
+                    String TN = rs.getString("TenantName");
+                    String R = rs.getString("RepairsOnHouse");
+                    String RC = rs.getString("CostOfRepair");
+                    String M = rs.getString("MiscellaneousExpenses");
+
+                    HouseRepairsModel rm = new HouseRepairsModel(H, TN, R, RC, M);
+                    data.add(rm);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return data;
     }
@@ -796,7 +1020,8 @@ public class FXMLDocumentController implements Initializable {
         h_HouseDetails.prefHeightProperty().bind(motherPane.heightProperty());
         h_PaymentDetails.prefHeightProperty().bind(motherPane.heightProperty());
         h_MonthlyExpenditure.prefHeightProperty().bind(motherPane.heightProperty());
-
+        
+        //Handling mouse clicked event on titledpane
         HouseBlocks.setOnMouseClicked((MouseEvent e) -> {
             SelectHouseBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 Label label = new Label();
@@ -808,7 +1033,7 @@ public class FXMLDocumentController implements Initializable {
                     PreparedStatement pstmt = conn.prepareStatement(query);
                     pstmt.setString(1, (String) SelectHouseBox.getSelectionModel().getSelectedItem());
                     ResultSet rs = pstmt.executeQuery();
-                    
+
                     while (rs.next()) {
                         TName.setText(rs.getString("TenantName"));
                         Repairs.setText(rs.getString("RepairsOnHouse"));
@@ -820,10 +1045,10 @@ public class FXMLDocumentController implements Initializable {
                 } catch (SQLException ex) {
                     Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                checkComboBox = "BlockA";
                 HouseBlocks.setExpanded(false);
                 Platform.runLater(() -> {
-                    
-                    SelectHouseBox.setItems(HouseNumber);
+
                 });
             });
             SelectBlockB.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -847,14 +1072,195 @@ public class FXMLDocumentController implements Initializable {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
+                checkComboBox = "BlockB";
+                HouseBlocks.setExpanded(false);
+            });
+            SelectBlockC.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                Label label = new Label();
+                label.setText((String) SelectBlockC.getSelectionModel().getSelectedItem());
+                try {
+                    String url2 = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+                    String select = "select * from JatomAptsDetails where HNumber = ?";
+                    Connection conn = DriverManager.getConnection(url2);
+                    PreparedStatement pstmt = conn.prepareStatement(select);
+                    pstmt.setString(1, (String) SelectBlockC.getSelectionModel().getSelectedItem());
+                    ResultSet rs = pstmt.executeQuery();
+
+                    while (rs.next()) {
+                        TName.setText(rs.getString("TenantName"));
+                        Repairs.setText(rs.getString("RepairsOnHouse"));
+                        repairCost.setText(rs.getString("CostOfRepair"));
+                        miscellaneous.setText(rs.getString("MiscellaneousExpenses"));
+                    }
+                    HouseBlocks.setGraphic(label);
+                    conn.close();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                checkComboBox = "BlockC";
+               HouseBlocks.setExpanded(false);
+            });
+            SelectNasraBlock.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                Label label = new Label();
+                label.setText((String) SelectNasraBlock.getSelectionModel().getSelectedItem());
+                try {
+                    String url3 = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+                    String select = "select * from JatomAptsDetails where HNumber = ?";
+                    Connection conn = DriverManager.getConnection(url3);
+                    PreparedStatement pstmt = conn.prepareStatement(select);
+                    pstmt.setString(1, (String) SelectNasraBlock.getSelectionModel().getSelectedItem());
+                    ResultSet rs = pstmt.executeQuery();
+                    
+                    while (rs.next()) {                        
+                        TName.setText(rs.getString("TenantName"));
+                        Repairs.setText(rs.getString("RepairsOnHouse"));
+                        repairCost.setText(rs.getString("CostOfRepair"));
+                        miscellaneous.setText(rs.getString("MiscellaneousExpenses"));
+                    }
+                    HouseBlocks.setGraphic(label);
+                    conn.close();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                checkComboBox = "NasraBlock";
                 HouseBlocks.setExpanded(false);
             });
             
         });
-
+        
+        //Handling HouseBlocks2 mouse clicked event
+        HouseBlocks2.setOnMouseClicked((MouseEvent e) -> {
+            selectHouseBoxDetails.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                Label label = new Label();
+                label.setText((String)selectHouseBoxDetails.getSelectionModel().getSelectedItem());
+                try {
+                    String url4 = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+                    String select = "SELECT * FROM JatomTenantDetails where HouseNumber = ?";
+                    Connection conn = DriverManager.getConnection(url4);
+                    PreparedStatement pstmt = conn.prepareStatement(select);
+                    pstmt.setString(1, (String)selectHouseBoxDetails.getSelectionModel().getSelectedItem());
+                    ResultSet rs = pstmt.executeQuery();
+                    while (rs.next()) {
+                        TNameDetails.setText(rs.getString("TenantName"));
+                        TenantPhoneNumber.setText(rs.getString("TenantPhoneNumber"));
+                        RentAmount.setText(rs.getString("RentAmount"));
+                        DueDate.setText(rs.getString("DueDate"));
+                        RentDeposit.setText(rs.getString("Deposit"));
+                        MoveInDate.setText(rs.getString("MoveInDate"));
+                        MoveOutDate.setText(rs.getString("MoveOutDate"));
+                        LeaseStartDate.setText(rs.getString("LeaseStartDate"));
+                        LeaseEndDate.setText(rs.getString("LeaseEndDate"));
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                checkComboBoxDetails = "BlockA";
+                HouseBlocks2.setGraphic(label);
+                HouseBlocks2.setExpanded(false);
+            });
+            selectBlockBDetails.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                Label label = new Label();
+                label.setText((String)selectBlockBDetails.getSelectionModel().getSelectedItem());
+                try {
+                    String url5 = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+                    String select = "SELECT * FROM JatomTenantDetails where HouseNumber = ?";
+                    Connection conn = DriverManager.getConnection(url5);
+                    PreparedStatement pstmt = conn.prepareStatement(select);
+                    pstmt.setString(1, (String)selectBlockBDetails.getSelectionModel().getSelectedItem());
+                    ResultSet rs = pstmt.executeQuery();
+                    while (rs.next()) {                        
+                        TNameDetails.setText(rs.getString("TenantName"));
+                        TenantPhoneNumber.setText(rs.getString("TenantPhoneNumber"));
+                        RentAmount.setText(rs.getString("RentAmount"));
+                        DueDate.setText(rs.getString("DueDate"));
+                        RentDeposit.setText(rs.getString("Deposit"));
+                        MoveInDate.setText(rs.getString("MoveInDate"));
+                        MoveOutDate.setText(rs.getString("MoveOutDate"));
+                        LeaseStartDate.setText(rs.getString("LeaseStartDate"));
+                        LeaseEndDate.setText(rs.getString("LeaseEndDate"));    
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace(); 
+                }
+                checkComboBoxDetails = "BlockB";
+                HouseBlocks2.setGraphic(label);
+                HouseBlocks2.setExpanded(false);
+            });
+            selectBlockCDetails.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                Label label = new Label();
+                label.setText((String)selectBlockCDetails.getSelectionModel().getSelectedItem());
+                try {
+                    String url5 = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+                    String select = "SELECT * FROM JatomTenantDetails where HouseNumber = ?";
+                    Connection conn = DriverManager.getConnection(url5);
+                    PreparedStatement pstmt = conn.prepareStatement(select);
+                    pstmt.setString(1, (String)selectBlockCDetails.getSelectionModel().getSelectedItem());
+                    ResultSet rs = pstmt.executeQuery();
+                    while (rs.next()) {                        
+                        TNameDetails.setText(rs.getString("TenantName"));
+                        TenantPhoneNumber.setText(rs.getString("TenantPhoneNumber"));
+                        RentAmount.setText(rs.getString("RentAmount"));
+                        DueDate.setText(rs.getString("DueDate"));
+                        RentDeposit.setText(rs.getString("Deposit"));
+                        MoveInDate.setText(rs.getString("MoveInDate"));
+                        MoveOutDate.setText(rs.getString("MoveOutDate"));
+                        LeaseStartDate.setText(rs.getString("LeaseStartDate"));
+                        LeaseEndDate.setText(rs.getString("LeaseEndDate"));
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                checkComboBoxDetails = "BlockC";
+                HouseBlocks2.setGraphic(label);
+                HouseBlocks2.setExpanded(false);
+            });
+            selectNasraBlockDetails.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                Label label = new Label();
+                label.setText((String)selectNasraBlockDetails.getSelectionModel().getSelectedItem());
+                try {
+                    String url6 = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
+                    String select = "SELECT * FROM JatomTenantDetails where HouseNumber = ?";
+                    Connection conn = DriverManager.getConnection(url6);
+                    PreparedStatement pstmt = conn.prepareStatement(select);
+                    pstmt.setString(1, (String)selectNasraBlockDetails.getSelectionModel().getSelectedItem());
+                    ResultSet rs = pstmt.executeQuery();
+                    while (rs.next()) {                        
+                        TNameDetails.setText(rs.getString("TenantName"));
+                        TenantPhoneNumber.setText(rs.getString("TenantPhoneNumber"));
+                        RentAmount.setText(rs.getString("RentAmount"));
+                        DueDate.setText(rs.getString("DueDate"));
+                        RentDeposit.setText(rs.getString("Deposit"));
+                        MoveInDate.setText(rs.getString("MoveInDate"));
+                        MoveOutDate.setText(rs.getString("MoveOutDate"));
+                        LeaseStartDate.setText(rs.getString("LeaseStartDate"));
+                        LeaseEndDate.setText(rs.getString("LeaseEndDate"));
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                checkComboBoxDetails = "NasraBlock";
+                HouseBlocks2.setGraphic(label);
+                HouseBlocks2.setExpanded(false);
+            });
+            
+        });
+        h_HouseDetails.setOnMouseClicked((Event e) -> {
+            if (HouseBlocks.isExpanded()){
+                HouseBlocks.setExpanded(false);
+            }
+        });
+        topbar.setOnMouseClicked((Event e) ->{
+            if (HouseBlocks.isExpanded()){
+                HouseBlocks.setExpanded(false);
+            }
+        });
+        if (!HouseBlocks2.isExpanded()){
+            titledPaneAnchor.setVisible(false);
+        }
         HouseBlocks.setExpanded(false);
         HouseBlocks.setAnimated(true);
-
+        HouseBlocks2.setExpanded(false);
+        HouseBlocks2.setAnimated(true);
     }
 
 }
