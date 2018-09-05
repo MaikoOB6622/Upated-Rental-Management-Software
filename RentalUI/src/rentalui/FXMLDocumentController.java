@@ -6,6 +6,8 @@
 package rentalui;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -27,6 +29,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -37,6 +40,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javax.swing.JOptionPane;
+import org.sqlite.SQLiteException;
 
 
 /**
@@ -63,8 +68,6 @@ public class FXMLDocumentController implements Initializable {
     private AnchorPane h_HouseDetails;
     @FXML
     private AnchorPane h_MonthlyExpenditure;
-    @FXML
-    private AnchorPane titledPaneAnchor;
     @FXML
     private TitledPane HouseBlocks;
     @FXML
@@ -200,6 +203,10 @@ public class FXMLDocumentController implements Initializable {
     
     @FXML
     private TextField LeaseEndDate;
+    @FXML
+    private Label HouseVacant;
+    @FXML
+    private Label HouseOccupied;
     
     @FXML
     private void createTable(String HouseNumber, String Amount, String PayerName, String Month){
@@ -235,21 +242,25 @@ public class FXMLDocumentController implements Initializable {
         }  
     }
     
-    @FXML
-    private void foreignKeyTableTest(){
+    //Updating JatomAptDetails table
+    private void insertJatomAptDetails(String RepairsOnHouse, String CostOfRepair, String MiscellaneousExpenses, String HNumber){
         String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
-        String sql2 = "CREATE TABLE IF NOT EXISTS JatomAptsDetails (HNumber text PRIMARY KEY, TenantName text, RepairsOnHouse text, CostOfRepair text, MiscellaneousExpenses text, FOREIGN KEY (TenantName) REFERENCES JatomApts (HouseNumber))";
+        String sql = "UPDATE JatomAptsDetails SET RepairsOnhouse = ?, CostOfRepair = ?, MiscellaneousExpenses = ? WHERE HNumber = ?";
         try {
             Connection conn = DriverManager.getConnection(url);
-            PreparedStatement stmt = conn.prepareStatement(sql2);
-            stmt.executeUpdate();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, RepairsOnHouse);
+            pstmt.setString(2, CostOfRepair);
+            pstmt.setString(3, MiscellaneousExpenses);
+            pstmt.setString(4, HNumber);
+            pstmt.execute();
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
     
-    private void createTable2(String HNumber, String TenantName, String RepairsOnHouse, String CostOfRepair, String MiscellaneousExpenses){
+    private void createTable2(String HNumber, String TenantName){
         String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
         String sql2 = "CREATE TABLE IF NOT EXISTS JatomAptsDetails (HNumber text PRIMARY KEY, TenantName text, RepairsOnHouse text, CostOfRepair text, MiscellaneousExpenses text, FOREIGN KEY (TenantName) REFERENCES JatomApts (HouseNumber))";
        try {
@@ -267,9 +278,6 @@ public class FXMLDocumentController implements Initializable {
             PreparedStatement pstmt = conn.prepareStatement(sql3);
             pstmt.setString(1, HNumber);
             pstmt.setString(2, TenantName);
-            pstmt.setString(3, RepairsOnHouse);
-            pstmt.setString(4, CostOfRepair);
-            pstmt.setString(5, MiscellaneousExpenses);
             pstmt.executeUpdate();
             conn.close();
         } catch (SQLException e) {
@@ -340,15 +348,15 @@ public class FXMLDocumentController implements Initializable {
         }
     }
     
-    private void createTenantDetailstable (String HouseNumber, String TenantName, String TenantPhoneNumber, String RentAmount, String DueDate, String Deposit, String MoveInDate, String MoveOutDate, String LeaseStartDate, String LeaseEndDate){
+    private void createTenantDetailstable (String HouseNumber, String TenantName, String TenantPhoneNumber, String RentAmount, String DueDate, String Deposit, String MoveInDate, String MoveOutDate, String LeaseStartDate, String LeaseEndDate) throws SQLException{
         String url = "jdbc:sqlite:C:\\Users\\Mike\\Documents\\NetBeansProjects\\SQLite\\ResidentialRentalManagementSoftware.sqlite";
-        String sql = "CREATE TABLE IF NOT EXISTS JatomTenantDetails (HouseNumber text, TenantName text, TenantPhoneNumber text, RentAmount text, DueDate text, Deposit text, MoveInDate text, MoveOutDate text, LeaseStartDate text, LeaseEndDate text)";
+        String sql = "CREATE TABLE IF NOT EXISTS JatomTenantDetails (HouseNumber text PRIMARY KEY, TenantName text, TenantPhoneNumber text, RentAmount text, DueDate text, Deposit text, MoveInDate text, MoveOutDate text, LeaseStartDate text, LeaseEndDate text)";
         try {
             Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.execute();
             conn.close();
-        } catch (SQLException e) {
+        } catch (SQLiteException e) {
             e.printStackTrace();
         }
         String sql1 = "INSERT INTO JatomTenantDetails (HouseNumber, TenantName, TenantPhoneNumber, RentAmount, DueDate, Deposit, MoveInDate, MoveOutDate, LeaseStartDate, LeaseEndDate) VALUES(?,?,?,?,?,?,?,?,?,?)";
@@ -367,15 +375,20 @@ public class FXMLDocumentController implements Initializable {
             pstmt.setString(10, LeaseEndDate);
             pstmt.execute();
             conn.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLiteException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error Dialog");
+            alert.setHeaderText("Error while saving to Database");
+            alert.setContentText("The selected house is already occupied. Please confirm the house number and try again");
+            alert.showAndWait();
         }
     }
     
     @FXML
-    private void tableInsertTenantDetails(){
+    private void tableInsertTenantDetails() throws SQLException{
         if (checkComboBoxDetails == "BlockA"){
             this.createTenantDetailstable((String) selectHouseBoxDetails.getSelectionModel().getSelectedItem(), TNameDetails.getText(), TenantPhoneNumber.getText(), RentAmount.getText(), DueDate.getText(), RentDeposit.getText(), MoveInDate.getText(), MoveOutDate.getText(), LeaseStartDate.getText(), LeaseEndDate.getText());
+            this.createTable2((String)selectHouseBoxDetails.getSelectionModel().getSelectedItem(), TNameDetails.getText());
             selectHouseBoxDetails.setValue(null);
             TNameDetails.setText("");
             TenantPhoneNumber.setText("");
@@ -388,6 +401,7 @@ public class FXMLDocumentController implements Initializable {
             LeaseEndDate.setText("");
         }else if (checkComboBoxDetails == "BlockB") {
             this.createTenantDetailstable((String)selectBlockBDetails.getSelectionModel().getSelectedItem(), TNameDetails.getText(), TenantPhoneNumber.getText(), RentAmount.getText(), DueDate.getText(), RentDeposit.getText(), MoveInDate.getText(), MoveOutDate.getText(), LeaseStartDate.getText(), LeaseEndDate.getText());
+            this.createTable2((String)selectBlockBDetails.getSelectionModel().getSelectedItem(), TNameDetails.getText());
             selectBlockBDetails.setValue(null);
             TNameDetails.setText("");
             TenantPhoneNumber.setText("");
@@ -398,9 +412,9 @@ public class FXMLDocumentController implements Initializable {
             MoveOutDate.setText("");
             LeaseStartDate.setText("");
             LeaseEndDate.setText("");
-             
         }else if (checkComboBoxDetails == "BlockC"){
             this.createTenantDetailstable((String) selectBlockCDetails.getSelectionModel().getSelectedItem(), TNameDetails.getText(), TenantPhoneNumber.getText(), RentAmount.getText(), DueDate.getText(), RentDeposit.getText(), MoveInDate.getText(), MoveOutDate.getText(), LeaseStartDate.getText(), LeaseEndDate.getText());
+            this.createTable2((String)selectBlockCDetails.getSelectionModel().getSelectedItem(), TNameDetails.getText());
             selectBlockCDetails.setValue(null);
             TNameDetails.setText("");
             TenantPhoneNumber.setText("");
@@ -413,6 +427,7 @@ public class FXMLDocumentController implements Initializable {
             LeaseEndDate.setText("");
         }else if (checkComboBoxDetails == "NasraBlock"){
             this.createTenantDetailstable((String) selectNasraBlockDetails.getSelectionModel().getSelectedItem(), TNameDetails.getText(), TenantPhoneNumber.getText(), RentAmount.getText(), DueDate.getText(), RentDeposit.getText(), MoveInDate.getText(), MoveOutDate.getText(), LeaseStartDate.getText(), LeaseEndDate.getText());
+            this.createTable2((String)selectNasraBlockDetails.getSelectionModel().getSelectedItem(), TNameDetails.getText());
             selectNasraBlockDetails.setValue(null);
             TNameDetails.setText("");
             TenantPhoneNumber.setText("");
@@ -452,28 +467,28 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void TableInsertButton2() {
         if (checkComboBox == "BlockA") {
-            this.createTable2((String) SelectHouseBox.getSelectionModel().getSelectedItem(), TName.getText(), Repairs.getText(), repairCost.getText(), miscellaneous.getText());
+            this.insertJatomAptDetails(Repairs.getText(), repairCost.getText(), miscellaneous.getText(), (String)SelectHouseBox.getSelectionModel().getSelectedItem());
             SelectHouseBox.setValue(null);
             TName.setText("");
             Repairs.setText("");
             repairCost.setText("");
             miscellaneous.setText("");
         }else if (checkComboBox == "BlockB"){
-            this.createTable2((String)SelectBlockB.getSelectionModel().getSelectedItem(), TName.getText(), Repairs.getText(), repairCost.getText(), miscellaneous.getText());
+            this.insertJatomAptDetails(Repairs.getText(), repairCost.getText(), miscellaneous.getText(), (String)SelectBlockB.getSelectionModel().getSelectedItem());
             SelectBlockB.setValue(null);
             TName.setText("");
             Repairs.setText("");
             repairCost.setText("");
             miscellaneous.setText("");
         }else if (checkComboBox == "BlockC"){
-            this.createTable2((String)SelectBlockC.getSelectionModel().getSelectedItem(), TName.getText(), Repairs.getText(), repairCost.getText(), miscellaneous.getText());
+            this.insertJatomAptDetails(Repairs.getText(), repairCost.getText(), miscellaneous.getText(), (String)SelectBlockC.getSelectionModel().getSelectedItem());
             SelectBlockC.setValue(null);
             TName.setText("");
             Repairs.setText("");
             repairCost.setText("");
             miscellaneous.setText("");
         }else if (checkComboBox == "NasraBlock"){
-            this.createTable2((String)SelectNasraBlock.getSelectionModel().getSelectedItem(), TName.getText(), Repairs.getText(), repairCost.getText(), miscellaneous.getText());
+            this.insertJatomAptDetails(Repairs.getText(), repairCost.getText(), miscellaneous.getText(), (String)selectNasraBlockDetails.getSelectionModel().getSelectedItem());
             SelectNasraBlock.setValue(null);
             TName.setText("");
             Repairs.setText("");
@@ -1244,6 +1259,18 @@ public class FXMLDocumentController implements Initializable {
             });
             
         });
+        
+        h_TenantDetails.setOnMouseClicked((Event e) -> {
+            if (HouseBlocks2.isExpanded()){
+                HouseBlocks2.setExpanded(false);
+            }
+        });
+        topbar.setOnMouseClicked((Event e) -> {
+            if (HouseBlocks2.isExpanded()){
+                HouseBlocks2.setExpanded(false);
+            }
+        });
+        
         h_HouseDetails.setOnMouseClicked((Event e) -> {
             if (HouseBlocks.isExpanded()){
                 HouseBlocks.setExpanded(false);
@@ -1254,13 +1281,14 @@ public class FXMLDocumentController implements Initializable {
                 HouseBlocks.setExpanded(false);
             }
         });
-        if (!HouseBlocks2.isExpanded()){
-            titledPaneAnchor.setVisible(false);
-        }
+        
+        TName.setEditable(false);
         HouseBlocks.setExpanded(false);
         HouseBlocks.setAnimated(true);
         HouseBlocks2.setExpanded(false);
         HouseBlocks2.setAnimated(true);
+        HouseOccupied.setVisible(false);
+        HouseVacant.setVisible(false);
     }
 
 }
