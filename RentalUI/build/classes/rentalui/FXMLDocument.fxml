@@ -35,20 +35,6 @@
                </image>
             </ImageView>
          </children></AnchorPane>
-      <AnchorPane fx:id="h_PaymentDetails" layoutY="65.0" prefHeight="536.0" prefWidth="626.0" style="-fx-background-color: #3D4956;">
-         <children>
-            <Label layoutX="14.0" layoutY="14.0" prefHeight="32.0" prefWidth="167.0" style="-fx-background-color: Grey;" text=" Tenant House Number" />
-            <Label layoutX="14.0" layoutY="70.0" prefHeight="32.0" prefWidth="167.0" style="-fx-background-color: Grey;" text=" Amount Paid " />
-            <Label layoutX="14.0" layoutY="182.0" prefHeight="32.0" prefWidth="167.0" style="-fx-background-color: Grey;" text=" Month Rent is For" />
-            <Label layoutX="14.0" layoutY="126.0" prefHeight="32.0" prefWidth="167.0" style="-fx-background-color: Grey;" text=" Name of Payee" />
-            <TextField fx:id="Amount" layoutX="206.0" layoutY="70.0" prefHeight="31.0" prefWidth="267.0" />
-            <TextField fx:id="Name" layoutX="206.0" layoutY="126.0" prefHeight="31.0" prefWidth="267.0" />
-            <Button fx:id="Submit" layoutX="151.0" layoutY="323.0" mnemonicParsing="false" onAction="#TableInsertButton" prefHeight="31.0" prefWidth="258.0" text="Submit to DB" />
-            <ComboBox fx:id="HouseNumberBox" layoutX="206.0" layoutY="14.0" onAction="#initializeHNoBox" onMouseClicked="#initializeHNoBox" prefHeight="31.0" prefWidth="267.0" />
-            <ComboBox fx:id="MonthBox" layoutX="206.0" layoutY="182.0" onAction="#initializeMonthBox" onMouseClicked="#initializeMonthBox" prefHeight="31.0" prefWidth="267.0" />
-            <Button fx:id="payerDetailsTableButton" layoutX="489.0" layoutY="14.0" mnemonicParsing="false" onAction="#payerDetailsButton" prefHeight="31.0" prefWidth="115.0" text="View History" />
-         </children>
-      </AnchorPane>
       <AnchorPane fx:id="h_MonthlyExpenditure" layoutY="65.0" prefHeight="536.0" prefWidth="626.0" style="-fx-background-color: #3D4956;">
          <children>
             <Label layoutX="16.0" layoutY="14.0" prefHeight="27.0" prefWidth="371.0" text="Recurrent Variable Monthly Expenditures" textFill="#8f5d5d">
@@ -81,6 +67,31 @@
             <Button fx:id="b_updateElectricity" layoutX="481.0" layoutY="129.0" mnemonicParsing="false" onMouseClicked="#updateElectricity" prefHeight="31.0" prefWidth="52.0" text="Add" />
             <Button fx:id="viewTableRecurrentExpenditure" layoutX="481.0" layoutY="50.0" mnemonicParsing="false" onAction="#tableButton" prefHeight="31.0" prefWidth="115.0" text="View History" />
             <Button fx:id="viewTableOtherExpenditure" layoutX="484.0" layoutY="246.0" mnemonicParsing="false" onAction="#otherexpenditureButton" prefHeight="31.0" prefWidth="115.0" text="View History" />
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="h_PaymentDetails" layoutY="65.0" prefHeight="536.0" prefWidth="626.0" style="-fx-background-color: #3D4956;">
+         <children>
+            <Label layoutX="14.0" layoutY="14.0" prefHeight="32.0" prefWidth="167.0" style="-fx-background-color: Grey;" text=" Tenant House Number" />
+            <Label layoutX="14.0" layoutY="70.0" prefHeight="32.0" prefWidth="167.0" style="-fx-background-color: Grey;" text=" Amount Paid " />
+            <Label layoutX="14.0" layoutY="182.0" prefHeight="32.0" prefWidth="167.0" style="-fx-background-color: Grey;" text=" Month Rent is For" />
+            <Label layoutX="14.0" layoutY="126.0" prefHeight="32.0" prefWidth="167.0" style="-fx-background-color: Grey;" text=" Name of Payee" />
+            <TextField fx:id="Amount" layoutX="206.0" layoutY="70.0" prefHeight="31.0" prefWidth="267.0" />
+            <TextField fx:id="Name" layoutX="206.0" layoutY="126.0" prefHeight="31.0" prefWidth="267.0" />
+            <Button fx:id="Submit" layoutX="151.0" layoutY="323.0" mnemonicParsing="false" onAction="#TableInsertButton" prefHeight="31.0" prefWidth="258.0" text="Submit to DB" />
+            <ComboBox fx:id="MonthBox" layoutX="206.0" layoutY="182.0" onAction="#initializeMonthBox" onMouseClicked="#initializeMonthBox" prefHeight="31.0" prefWidth="267.0" />
+            <Button fx:id="payerDetailsTableButton" layoutX="489.0" layoutY="14.0" mnemonicParsing="false" onAction="#payerDetailsButton" prefHeight="31.0" prefWidth="115.0" text="View History" />
+            <TitledPane fx:id="HouseBlocks3" animated="false" layoutX="206.0" layoutY="14.0">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <ComboBox fx:id="BlockA3" layoutX="2.0" layoutY="6.0" onAction="#initializeHNoBox" onMouseClicked="#initializeHNoBox" prefHeight="31.0" prefWidth="196.0" promptText="Block A" />
+                        <ComboBox fx:id="BlockB3" layoutX="2.0" layoutY="47.0" onAction="#initializeBlockB3" onMouseClicked="#initializeBlockB3" prefHeight="31.0" prefWidth="196.0" promptText="Block B" />
+                        <ComboBox fx:id="BlockC3" layoutX="2.0" layoutY="88.0" onAction="#initializeBlockC3" onMouseClicked="#initializeBlockC3" prefHeight="31.0" prefWidth="196.0" promptText="Block C" />
+                        <ComboBox fx:id="NasraBlock3" layoutX="2.0" layoutY="129.0" onAction="#initializeNasraBlock3" onMouseClicked="#initializeNasraBlock3" prefHeight="31.0" prefWidth="196.0" promptText="Nasra Block" />
+                     </children>
+                  </AnchorPane>
+              </content>
+            </TitledPane>
          </children>
       </AnchorPane>
       <AnchorPane fx:id="h_HouseDetails" layoutY="65.0" prefHeight="536.0" prefWidth="626.0" style="-fx-background-color: #3D4956;">
@@ -153,8 +164,8 @@
                   </AnchorPane>
               </content>
             </TitledPane>
-            <Label fx:id="HouseVacant" layoutX="497.0" layoutY="14.0" prefHeight="32.0" prefWidth="115.0" style="-fx-background-color: #d81c1c;" text="       VACANT" />
             <Label fx:id="HouseOccupied" layoutX="497.0" layoutY="14.0" prefHeight="32.0" prefWidth="115.0" style="-fx-background-color: #1cd83e;" text="    OCCUPIED" />
+            <Label fx:id="HouseVacant" layoutX="497.0" layoutY="14.0" prefHeight="32.0" prefWidth="115.0" style="-fx-background-color: #d81c1c;" text="       VACANT" />
          </children>
       </AnchorPane>
    </children>
