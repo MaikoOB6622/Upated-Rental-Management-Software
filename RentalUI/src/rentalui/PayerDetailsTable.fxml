@@ -6,15 +6,15 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="801.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <TableView fx:id="payerDetailsTable" layoutX="183.0" layoutY="60.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <TableView fx:id="payerDetailsTable" layoutX="183.0" layoutY="60.0" prefHeight="400.0" prefWidth="801.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <columns>
             <TableColumn fx:id="houseNoCol" prefWidth="141.0" text="House Number" />
-            <TableColumn fx:id="paidCol" prefWidth="153.0" text="Amount Paid" />
-            <TableColumn fx:id="payerNameCol" prefWidth="151.0" text="Payer Name" />
-            <TableColumn fx:id="rentMonthCol" prefWidth="154.0" text="Month Rent Is For" />
+            <TableColumn fx:id="paidCol" prefWidth="136.0" text="Amount Paid" />
+            <TableColumn fx:id="payerNameCol" prefWidth="182.0" text="Payer Name" />
+            <TableColumn fx:id="rentMonthCol" minWidth="0.0" prefWidth="160.0" text="Month Rent Is For" />
+            <TableColumn fx:id="rentDateCol" prefWidth="181.0" text="Date of Payment" />
          </columns>
       </TableView>
    </children>

@@ -5,19 +5,22 @@
  */
 package rentalui;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.HBox;
 
 /**
  *PayerDetailsTable FXML Controller class
  *
  * @author Mike
  */
-public class PayerDetailsTableController implements Initializable {
+public class PayerDetailsTableController extends HBox implements Initializable {
     
     @FXML
     public TableView<PayerDetails>payerDetailsTable;
@@ -29,8 +32,11 @@ public class PayerDetailsTableController implements Initializable {
     public TableColumn<PayerDetails, String>payerNameCol;
     @FXML
     public TableColumn<PayerDetails, String>rentMonthCol;
+    @FXML
+    public TableColumn<PayerDetails, String>rentDateCol;
     
     private final FXMLDocumentController controller;
+    
     
     /**
      * Passing reference to FXMLDOcumentController into PayerDetailsTableController
@@ -48,6 +54,7 @@ public class PayerDetailsTableController implements Initializable {
         paidCol.setCellValueFactory(cellData -> cellData.getValue().paidAmountProperty());
         payerNameCol.setCellValueFactory(cellData -> cellData.getValue().payerNameProperty());
         rentMonthCol.setCellValueFactory(cellData -> cellData.getValue().monthColProperty());
+        rentDateCol.setCellValueFactory(cellData -> cellData.getValue().dateColProperty());
         
         payerDetailsTable.setItems(controller.getPayerDetailsData());
     }    

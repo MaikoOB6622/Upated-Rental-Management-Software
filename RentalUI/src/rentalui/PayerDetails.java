@@ -17,13 +17,15 @@ public class PayerDetails {
     public StringProperty PaidAmount;
     public StringProperty PayerName;
     public StringProperty monthCol;
+    public StringProperty dateCol;
     
     //Constructor
-    public PayerDetails(String M, String Paid, String Name, String Month){
+    public PayerDetails(String M, String Paid, String Name, String Month, String Date){
         this.TenantHouseNo = new SimpleStringProperty(M);
         this.PaidAmount = new SimpleStringProperty(Paid);
         this.PayerName = new SimpleStringProperty(Name);
         this.monthCol = new SimpleStringProperty(Month);
+        this.dateCol = new SimpleStringProperty(Date);
     }
     
     public String getTenantHouse(){
@@ -72,5 +74,17 @@ public class PayerDetails {
     
     public StringProperty monthColProperty(){
         return monthCol;
+    }
+    
+    public String getDate(){
+        return dateCol.get();
+    }
+    
+    public void setDatecol(String value){
+        dateCol.set(value);
+    }
+    
+    public StringProperty dateColProperty(){
+        return dateCol;
     }
 }
